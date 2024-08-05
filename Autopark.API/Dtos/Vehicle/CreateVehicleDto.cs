@@ -9,8 +9,8 @@ namespace Autopark.API.Dtos.Vehicle
     public record CreateVehicleDto
     (
         [Required] string LicensePlate,
-        [Range(1, double.PositiveInfinity, ErrorMessage = "Only positive number allowed")] decimal Price,
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")] int Year,
+        [Range(0, double.PositiveInfinity, ErrorMessage = "Only non-negative number allowed")] decimal Price,
+        [Range(Options.MinManufactureYear, Options.MaxManufactureYear, ErrorMessage = "Required valid year")] int ManufactureYear,
         [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")] int Mileage
     );
 }

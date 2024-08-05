@@ -43,15 +43,12 @@ namespace Autopark.API.Controllers
 
         [HttpPost]
         public async Task<ActionResult> AddVehicleAsync(CreateVehicleDto createVehicleDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
+        {   
             var vehicle = new Vehicle
             {
                 Id = Guid.NewGuid(),
                 Price = createVehicleDto.Price,
-                Year = createVehicleDto.Year,
+                ManufactureYear = createVehicleDto.ManufactureYear,
                 Mileage = createVehicleDto.Mileage,
                 LicensePlate = createVehicleDto.LicensePlate
             };
@@ -61,26 +58,5 @@ namespace Autopark.API.Controllers
 
             return CreatedAtAction(nameof(GetVehicleAsync), new {id = vehicle.Id}, vehicle);
         }
-
-        // [HttpPost]
-        // public async Task<ActionResult> PostAsync([FromBody] CreateVehicleDto createItemDto)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(ModelState);
-
-        //     var vehicle = new VehicleEntity
-        //     {
-        //         Id = Guid.NewGuid(),
-        //         LicensePlate = createItemDto.LicensePlate,
-        //         Price = createItemDto.Price,
-        //         Year = createItemDto.Year,
-        //         Mileage = createItemDto.Mileage
-        //     };
-
-        //     db.Vehicle.Add(vehicle);
-        //     await db.SaveChangesAsync();
-
-        //     return CreatedAtAction(nameof(GetByIdAsync), new { id = vehicle.Id }, vehicle);
-        // }
     }
 }
