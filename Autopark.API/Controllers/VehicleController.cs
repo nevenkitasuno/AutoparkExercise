@@ -42,21 +42,50 @@ namespace Autopark.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddVehicleAsync(CreateVehicleDto createVehicleDto)
-        {   
+        public async Task<ActionResult> AddVehicleAsync(UpsertVehicleDto upsertVehicleDto)
+        {
             var vehicle = new Vehicle
             {
                 Id = Guid.NewGuid(),
-                Price = createVehicleDto.Price,
-                ManufactureYear = createVehicleDto.ManufactureYear,
-                Mileage = createVehicleDto.Mileage,
-                LicensePlate = createVehicleDto.LicensePlate
+                Price = upsertVehicleDto.Price,
+                ManufactureYear = upsertVehicleDto.ManufactureYear,
+                Mileage = upsertVehicleDto.Mileage,
+                LicensePlate = upsertVehicleDto.LicensePlate
             };
-            
+
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetVehicleAsync), new {id = vehicle.Id}, vehicle);
+            return CreatedAtAction(nameof(GetVehicleAsync), new { id = vehicle.Id }, vehicle);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateVehicleAsync(Guid id, UpsertVehicleDto upsertVehicleDto)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null) return NotFound();
+
+            vehicle.Price = upsertVehicleDto.Price;
+            vehicle.ManufactureYear = upsertVehicleDto.ManufactureYear;
+            vehicle.Mileage = upsertVehicleDto.Mileage;
+            vehicle.LicensePlate = upsertVehicleDto.LicensePlate;
+
+            // _context.Entry(vehicle).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVehicleAsync(Guid id)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null) return NotFound();
+
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

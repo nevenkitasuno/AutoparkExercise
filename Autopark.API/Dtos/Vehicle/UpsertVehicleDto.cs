@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Autopark.API.Dtos.Vehicle
 {
-    public record CreateVehicleDto
+    public record UpsertVehicleDto
     (
         [Required] string LicensePlate,
         [Range(0, double.PositiveInfinity, ErrorMessage = "Only non-negative number allowed")] decimal Price,
