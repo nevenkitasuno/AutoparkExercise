@@ -21,5 +21,5 @@ function _displayVehicles(vehicles) {
         temp += "</tr>"
     });
 
-    document.getElementById("data").innerHTML += temp;
+    document.getElementById("vehicles").innerHTML += temp;
 }
