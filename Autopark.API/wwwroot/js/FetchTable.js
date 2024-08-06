@@ -11,7 +11,9 @@ function displayVehiclesWithManufacturerAndModelName(vehiclesWithManufacturerAnd
     var temp = "";
 
     vehiclesWithManufacturerAndModelNames.forEach((x) => {
-        temp += "<tr>";
+        temp += '<tr id="vehicle-row-' + x.id + '">';
+        temp += "<td>" + formDeleteButton('deleteVehicle', x.id) + "</td>";
+        temp += '<td><button class="editbtn">✍️</button></td>';
         temp += "<td>" + x.id + "</td>";
         temp += "<td>" + x.price + "</td>";
         temp += "<td>" + x.manufactureYear + "</td>";
@@ -24,10 +26,29 @@ function displayVehiclesWithManufacturerAndModelName(vehiclesWithManufacturerAnd
     document.getElementById("VehiclesTable").innerHTML += temp;
 }
 
+function formDeleteButton(deleteFunctionName, id)
+{
+    return `<button class="deletebtn" onclick="${deleteFunctionName}('${id}')">❌</button>`;
+}
+
+function deleteVehicle(id) {
+    // fetch(apiPath + "/Vehicle/" + id, {
+    //     method: 'DELETE',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     }
+    // })
+    //    .then(response => response.json())
+    //    .then(data => console.log(data))
+    //    .catch(error => console.error('Error:', error));
+    rowId = "vehicle-row-"+id
+    console.log(rowId)
+    const row = document.getElementById(rowId);
+    row.remove(); 
+}
+
 function displayBrands(brands) {
     var temp = "";
-
-    console.log(brands);
 
     brands.forEach((x) => {
         temp += "<tr>";
