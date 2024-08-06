@@ -17,10 +17,7 @@ namespace Autopark.API.Controllers
     {
         private readonly AutoparkDbContext _context;
 
-        public VehicleController(AutoparkDbContext context)
-        {
-            _context = context;
-        }
+        public VehicleController(AutoparkDbContext context) { _context = context; }
 
         [HttpGet]
         public async Task<ActionResult<List<Vehicle>>> GetAllVehiclesAsync()

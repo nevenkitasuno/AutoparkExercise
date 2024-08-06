@@ -7,17 +7,17 @@ function getAndDisplayData(controller, displayFunction) {
         .catch(error => console.error('Error:', error));
 }
 
-function displayVehicles(vehicles) {
+function displayVehiclesWithManufacturerAndModelName(vehiclesWithManufacturerAndModelNames) {
     var temp = "";
 
-    vehicles.forEach((x) => {
+    vehiclesWithManufacturerAndModelNames.forEach((x) => {
         temp += "<tr>";
         temp += "<td>" + x.id + "</td>";
         temp += "<td>" + x.price + "</td>";
         temp += "<td>" + x.manufactureYear + "</td>";
         temp += "<td>" + x.mileage + "</td>";
         temp += "<td>" + x.licensePlate + "</td>";
-        temp += "<td>" + x.brandId + "</td>";
+        temp += "<td>" + x.manufacturerCompany + " " + x.modelName + "</td>";
         temp += "</tr>"
     });
 

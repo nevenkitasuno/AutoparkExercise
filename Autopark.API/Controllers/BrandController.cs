@@ -16,13 +16,10 @@ namespace Autopark.API.Controllers
     {
         private readonly AutoparkDbContext _context;
 
-        public BrandController(AutoparkDbContext context)
-        {
-            _context = context;
-        }
+        public BrandController(AutoparkDbContext context) { _context = context; }
 
         [HttpGet]
-        public async Task<ActionResult<List<Brand>>> GetAllVehiclesAsync()
+        public async Task<ActionResult<List<Brand>>> GetAllBrandsAsync()
         {
             var brands = await _context.Brands.AsNoTracking().ToListAsync();
             return Ok(brands);
