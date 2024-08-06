@@ -12,5 +12,7 @@ namespace Autopark.API.Entities
         public int ManufactureYear { get; set; }
         public int Mileage { get; set; }
         public required string LicensePlate { get; set; }
+        public long BrandId { get; set; }
+        public Brand? Brand { get; set; }
     }
 }

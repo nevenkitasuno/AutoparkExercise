@@ -34,10 +34,7 @@ namespace Autopark.API.Controllers
         public async Task<ActionResult<Vehicle>> GetVehicleAsync(Guid id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
-
-            if (vehicle == null)
-                return NotFound();
-
+            if (vehicle == null) return NotFound();
             return vehicle;
         }
 
@@ -50,7 +47,8 @@ namespace Autopark.API.Controllers
                 Price = upsertVehicleDto.Price,
                 ManufactureYear = upsertVehicleDto.ManufactureYear,
                 Mileage = upsertVehicleDto.Mileage,
-                LicensePlate = upsertVehicleDto.LicensePlate
+                LicensePlate = upsertVehicleDto.LicensePlate,
+                BrandId = upsertVehicleDto.BrandId
             };
 
             _context.Vehicles.Add(vehicle);
@@ -69,6 +67,7 @@ namespace Autopark.API.Controllers
             vehicle.ManufactureYear = upsertVehicleDto.ManufactureYear;
             vehicle.Mileage = upsertVehicleDto.Mileage;
             vehicle.LicensePlate = upsertVehicleDto.LicensePlate;
+            vehicle.BrandId = upsertVehicleDto.BrandId;
 
             // _context.Entry(vehicle).State = EntityState.Modified;
             await _context.SaveChangesAsync();

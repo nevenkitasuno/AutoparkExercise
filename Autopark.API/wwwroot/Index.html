@@ -1,27 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Vehicles</title>
-  </head>
-  <body>
-    <div class="container2">
-      <table class="table" border="1">
-          <thead>
-              <tr>
-                  <th>Id</th>
-                  <th>Price</th>
-                  <th>ManufactureYear</th>
-                  <th>Mileage</th>
-                  <th>LicensePlate</th>
-              </tr>
-          </thead>
-          <tbody id="vehicles"></tbody>
-      </table>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Vehicles</title>
+</head>
+
+<body>
+  <div class="VehiclesTableDiv">
+    <table class="table" border="1">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Price</th>
+          <th>ManufactureYear</th>
+          <th>Mileage</th>
+          <th>LicensePlate</th>
+          <th>BrandId</th>
+        </tr>
+      </thead>
+      <tbody id="VehiclesTable"></tbody>
+    </table>
   </div>
-  </body>
-  <script src="js/FetchTable.js"></script>
-  <script type="text/javascript">
-    getVehicles();
-  </script>
+
+  <br></br>
+
+  <div class="BrandsTableDiv">
+    <table class="table" border="1">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>ManufacturerCompany</th>
+          <th>ModelName</th>
+          <th>EngineDisplacementLiters</th>
+          <th>VehicleType</th>
+          <th>FuelTankCapacityLiters</th>
+          <th>SeatsCount</th>
+          <th>LiftWeightCapacityKg</th>
+        </tr>
+      </thead>
+      <tbody id="BrandsTable"></tbody>
+    </table>
+  </div>
+</body>
+<script src="js/FetchTable.js"></script>
+<script type="text/javascript">
+  getAndDisplayData("/Vehicle", displayVehicles);
+  getAndDisplayData("/Brand", displayBrands);
+</script>
+
 </html>

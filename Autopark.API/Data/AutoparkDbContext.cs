@@ -11,5 +11,6 @@ namespace Autopark.API.Data
     {
         public AutoparkDbContext(DbContextOptions<AutoparkDbContext> options) : base(options){}
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Brand> Brands { get; set; }
     }
 }
