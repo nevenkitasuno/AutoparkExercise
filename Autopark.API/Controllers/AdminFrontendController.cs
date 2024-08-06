@@ -16,6 +16,7 @@ namespace Autopark.API.Controllers
         private readonly AutoparkDbContext _context;
         public AdminFrontendController(AutoparkDbContext context) { _context = context; }
 
+        [HttpGet]
         public async Task<ActionResult<List<GetVehicleWithManufacturerAndModelNameDto>>> GetAllVehiclesWithManufacturerAndModelNamesAsync()
         {
             var vehiclesWithBrands = _context.Vehicles.Join(_context.Brands,

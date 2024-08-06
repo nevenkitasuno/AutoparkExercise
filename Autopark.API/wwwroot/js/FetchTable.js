@@ -12,23 +12,60 @@ function displayVehiclesWithManufacturerAndModelName(vehiclesWithManufacturerAnd
 
     vehiclesWithManufacturerAndModelNames.forEach((x) => {
         temp += '<tr id="vehicle-row-' + x.id + '">';
-        temp += "<td>" + formDeleteButton('deleteVehicle', x.id) + "</td>";
-        temp += '<td><button class="editbtn">✍️</button></td>';
-        temp += "<td>" + x.id + "</td>";
-        temp += "<td>" + x.price + "</td>";
-        temp += "<td>" + x.manufactureYear + "</td>";
-        temp += "<td>" + x.mileage + "</td>";
-        temp += "<td>" + x.licensePlate + "</td>";
-        temp += "<td>" + x.manufacturerCompany + " " + x.modelName + "</td>";
+        temp += makeRowForVehicleWithManufacturerAndModelName(x);
         temp += "</tr>"
     });
 
     document.getElementById("VehiclesTable").innerHTML += temp;
 }
 
-function formDeleteButton(deleteFunctionName, id)
-{
-    return `<button class="deletebtn" onclick="${deleteFunctionName}('${id}')">❌</button>`;
+function makeRowForVehicleWithManufacturerAndModelName(vehicleWithManufacturerAndModelName) {
+    row = ""
+    row += "<td>" + makeDeleteButton('deleteVehicle', vehicleWithManufacturerAndModelName.id) + "</td>";
+    row += '<td><button class="editBtn">✏️</button></td>';
+    row += "<td>" + vehicleWithManufacturerAndModelName.id + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.price + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.manufactureYear + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.mileage + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.licensePlate + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.manufacturerCompany + " " + vehicleWithManufacturerAndModelName.modelName + "</td>";
+    return row
+}
+
+document.getElementById('SubmitVehicleBtn').addEventListener('click', async function(event) {
+    event.preventDefault();
+
+    const formData = {
+        Price: document.getElementById('SubmitVehicleFormPrice').value,
+        ManufactureYear: document.getElementById('SubmitVehicleFormManufactureYear').value,
+        Mileage: document.getElementById('SubmitVehicleFormMileage').value,
+        LicensePlate: document.getElementById('SubmitVehicleFormLicensePlate').value,
+        BrandId: document.getElementById('SubmitVehicleFormBrand').value
+    };
+
+    try {
+        const response = await fetch(apiPath + '/Vehicle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            console.log('Form submitted successfully');
+        } else {
+            console.error('Form submission failed');
+        }
+    } catch (error) {
+        console.error('An error occurred during form submission:', error);
+    }
+    
+    location.reload();
+});
+
+function makeDeleteButton(deleteFunctionName, id) {
+    return `<button class="deleteBtn" onclick="${deleteFunctionName}('${id}')">❌</button>`;
 }
 
 function deleteVehicle(id) {
@@ -41,10 +78,10 @@ function deleteVehicle(id) {
     //    .then(response => response.json())
     //    .then(data => console.log(data))
     //    .catch(error => console.error('Error:', error));
-    rowId = "vehicle-row-"+id
+    rowId = "vehicle-row-" + id
     console.log(rowId)
     const row = document.getElementById(rowId);
-    row.remove(); 
+    row.remove();
 }
 
 function displayBrands(brands) {
@@ -66,8 +103,7 @@ function displayBrands(brands) {
     document.getElementById("BrandsTable").innerHTML += temp;
 }
 
-function vehicleTypeIntToStr(vehicleTypeInt)
-{
+function vehicleTypeIntToStr(vehicleTypeInt) {
     switch (vehicleTypeInt) {
         case 0:
             return "Легковой автомобиль";

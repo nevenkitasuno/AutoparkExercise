@@ -7,8 +7,39 @@
 </head>
 
 <body>
+
+  <div class="AddVehicleDiv">
+    <table class="table" border="1">
+      <caption>Add vehicle</caption>
+      <thead>
+        <tr>
+          <th>Add</th>
+          <th>Price</th>
+          <th>ManufactureYear</th>
+          <th>Mileage</th>
+          <th>LicensePlate</th>
+          <th>BrandId</th>
+        </tr>
+        <form>
+          <tr>
+            <td><input type="submit" value="✅" id="SubmitVehicleBtn"></td>
+            <td><input type="text" id="SubmitVehicleFormPrice" value="200000"></td>
+            <td><input type="text" id="SubmitVehicleFormManufactureYear" value="2024"></td>
+            <td><input type="text" id="SubmitVehicleFormMileage" value="120500"></td>
+            <td><input type="text" id="SubmitVehicleFormLicensePlate" value="A000AA"></td>
+            <td><input type="text" id="SubmitVehicleFormBrand" value="2"></td>
+          </tr>
+        </form>
+      </thead>
+      <tbody id="AddVehicle"></tbody>
+    </table>
+  </div>
+
+  <br></br>
+
   <div class="VehiclesTableDiv">
     <table class="table" border="1">
+      <caption>Vehicles table</caption>
       <thead>
         <tr>
           <th>Delete</th>
@@ -29,6 +60,7 @@
 
   <div class="BrandsTableDiv">
     <table class="table" border="1">
+      <caption>Brands table</caption>
       <thead>
         <tr>
           <th>Id</th>
