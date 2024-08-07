@@ -20,14 +20,45 @@
           <th>LicensePlate</th>
           <th>BrandId</th>
         </tr>
+        <!-- 415 Unsupported Media Type: <form action="http://127.0.0.1:5237/api/Vehicle" method="post"> -->
         <form>
           <tr>
             <td><input type="submit" value="✅" id="SubmitVehicleBtn"></td>
-            <td><input type="text" id="SubmitVehicleFormPrice" value="200000"></td>
-            <td><input type="text" id="SubmitVehicleFormManufactureYear" value="2024"></td>
-            <td><input type="text" id="SubmitVehicleFormMileage" value="120500"></td>
-            <td><input type="text" id="SubmitVehicleFormLicensePlate" value="A000AA"></td>
-            <td><input type="text" id="SubmitVehicleFormBrand" value="2"></td>
+            <td><input type="text" name="Price" id="SubmitVehicleFormPrice" value="200000"></td>
+            <td><input type="text" name="ManufactureYear" id="SubmitVehicleFormManufactureYear" value="2024"></td>
+            <td><input type="text" name="Mileage" id="SubmitVehicleFormMileage" value="120500"></td>
+            <td><input type="text" name="LicensePlate" id="SubmitVehicleFormLicensePlate" value="A000AA"></td>
+            <td><input type="text" name="BrandId" id="SubmitVehicleFormBrand" value="2"></td>
+          </tr>
+        </form>
+      </thead>
+      <tbody id="AddVehicle"></tbody>
+    </table>
+  </div>
+
+  <div id="EditVehicleDiv" style="display:none">
+    <br></br>
+    <table class="table" border="1">
+      <caption>Edit vehicle</caption>
+      <thead>
+        <tr>
+          <th>Submit</th>
+          <th>Id</th>
+          <th>Price</th>
+          <th>ManufactureYear</th>
+          <th>Mileage</th>
+          <th>LicensePlate</th>
+          <th>BrandId</th>
+        </tr>
+        <form onsubmit="return updateVehicleAndCloseMenu()">
+          <tr>
+            <td><input type="submit" value="✅" id=UpdateVehicleBtn"></td>
+            <td id="UpdateVehicleFormId"></td>
+            <td><input type="text" name="Price" id="UpdateVehicleFormPrice" value="200000"></td>
+            <td><input type="text" name="ManufactureYear" id="UpdateVehicleFormManufactureYear" value="2024"></td>
+            <td><input type="text" name="Mileage" id="UpdateVehicleFormMileage" value="120500"></td>
+            <td><input type="text" name="LicensePlate" id="UpdateVehicleFormLicensePlate" value="A000AA"></td>
+            <td><input type="text" name="BrandId" id="UpdateVehicleFormBrand" value="2"></td>
           </tr>
         </form>
       </thead>

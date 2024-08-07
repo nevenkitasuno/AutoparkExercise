@@ -54,7 +54,7 @@ namespace Autopark.API.Controllers
             return CreatedAtAction(nameof(GetVehicleAsync), new { id = vehicle.Id }, vehicle);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVehicleAsync(Guid id, UpsertVehicleDto upsertVehicleDto)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
@@ -72,7 +72,7 @@ namespace Autopark.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicleAsync(Guid id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);

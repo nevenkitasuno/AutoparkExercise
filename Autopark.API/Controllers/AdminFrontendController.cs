@@ -19,7 +19,7 @@ namespace Autopark.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<GetVehicleWithManufacturerAndModelNameDto>>> GetAllVehiclesWithManufacturerAndModelNamesAsync()
         {
-            var vehiclesWithBrands = _context.Vehicles.Join(_context.Brands,
+            var vehiclesWithBrands = await _context.Vehicles.Join(_context.Brands,
                 v => v.BrandId,
                 b => b.Id,
                 (v, b) => new GetVehicleWithManufacturerAndModelNameDto
@@ -31,7 +31,7 @@ namespace Autopark.API.Controllers
                     v.Mileage,
                     b.ManufacturerCompany,
                     b.ModelName
-                ));
+                )).AsNoTracking().ToListAsync();
 
             return Ok(vehiclesWithBrands);
         }

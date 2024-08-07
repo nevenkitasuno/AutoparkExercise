@@ -1,3 +1,5 @@
+// TODO: Split to separate files
+
 const apiPath = "http://127.0.0.1:5237/api";
 
 function getAndDisplayData(controller, displayFunction) {
@@ -11,29 +13,77 @@ function displayVehiclesWithManufacturerAndModelName(vehiclesWithManufacturerAnd
     var temp = "";
 
     vehiclesWithManufacturerAndModelNames.forEach((x) => {
-        temp += '<tr id="vehicle-row-' + x.id + '">';
         temp += makeRowForVehicleWithManufacturerAndModelName(x);
-        temp += "</tr>"
     });
 
     document.getElementById("VehiclesTable").innerHTML += temp;
 }
 
 function makeRowForVehicleWithManufacturerAndModelName(vehicleWithManufacturerAndModelName) {
+    vId = vehicleWithManufacturerAndModelName.id;
     row = ""
-    row += "<td>" + makeDeleteButton('deleteVehicle', vehicleWithManufacturerAndModelName.id) + "</td>";
-    row += '<td><button class="editBtn">✏️</button></td>';
-    row += "<td>" + vehicleWithManufacturerAndModelName.id + "</td>";
+    row += '<tr id="vehicle-row-' + vId + '">';
+    row += "<td>" + makeDeleteVehicleButton(vId) + "</td>";
+    row += "<td>" + makeUpdateVehicleButton(vId) + "</td>";
+    row += "<td>" + vId + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.price + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.manufactureYear + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.mileage + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.licensePlate + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.manufacturerCompany + " " + vehicleWithManufacturerAndModelName.modelName + "</td>";
+    row += "</tr>"
     return row
 }
 
-document.getElementById('SubmitVehicleBtn').addEventListener('click', async function(event) {
-    event.preventDefault();
+function editVehicleRow(vehicleWithManufacturerAndModelName)
+{
+    document.getElementById('vehicle-row-'+vehicleWithManufacturerAndModelName.id)
+        .replaceWith(makeRowForEditVehicle(vehicleWithManufacturerAndModelName))
+}
+
+function updateVehicleAndCloseMenu()
+{
+    const vehicleId = document.getElementById("UpdateVehicleFormId").innerHTML;
+    const price = document.getElementById('UpdateVehicleFormPrice').value;
+    const manufactureYear = document.getElementById('UpdateVehicleFormManufactureYear').value;
+    const mileage = document.getElementById('UpdateVehicleFormMileage').value;
+    const licensePlate = document.getElementById('UpdateVehicleFormLicensePlate').value;
+    const brandId = document.getElementById('UpdateVehicleFormBrand').value;
+
+    fetch(apiPath + '/Vehicle/' + vehicleId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            price: price,
+            manufactureYear: manufactureYear,
+            mileage: mileage,
+            licensePlate: licensePlate,
+            brandId: brandId
+        })
+    }).catch(error => console.error('Error:', error));
+
+    // Close menu
+    document.getElementById("EditVehicleDiv").style.display = 'none';
+    document.getElementById("UpdateVehicleFormId").innerHTML = "";
+
+    location.reload(); // TODO: get rid somehow
+    return false;
+}
+
+function makeUpdateVehicleButton(id) {
+    const updateFunctionName = 'openUpdateVehicleMenu'
+    return `<button class="updateBtn" onclick="${updateFunctionName}('${id}')">✏️</button>`;
+}
+
+function openUpdateVehicleMenu(vehicleId) {
+    document.getElementById("EditVehicleDiv").style.display = 'block'; // TODO: rename edit to update, use crud terms
+    document.getElementById("UpdateVehicleFormId").innerHTML = vehicleId;
+}
+
+document.getElementById('SubmitVehicleBtn').addEventListener('click', async function (event) {
+    // event.preventDefault();
 
     const formData = {
         Price: document.getElementById('SubmitVehicleFormPrice').value,
@@ -54,32 +104,31 @@ document.getElementById('SubmitVehicleBtn').addEventListener('click', async func
 
         if (response.ok) {
             console.log('Form submitted successfully');
+            console.log(response.body) // TODO: Add row instead of page reload
         } else {
             console.error('Form submission failed');
         }
     } catch (error) {
         console.error('An error occurred during form submission:', error);
     }
-    
-    location.reload();
+
+    location.reload(); // TODO: Add row instead of page reload
 });
 
-function makeDeleteButton(deleteFunctionName, id) {
+function makeDeleteVehicleButton(id) {
+    const deleteFunctionName = 'deleteVehicle'
     return `<button class="deleteBtn" onclick="${deleteFunctionName}('${id}')">❌</button>`;
 }
 
 function deleteVehicle(id) {
-    // fetch(apiPath + "/Vehicle/" + id, {
-    //     method: 'DELETE',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     }
-    // })
-    //    .then(response => response.json())
-    //    .then(data => console.log(data))
-    //    .catch(error => console.error('Error:', error));
+    fetch(apiPath + "/Vehicle/" + id, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .catch(error => console.error('Error:', error));
     rowId = "vehicle-row-" + id
-    console.log(rowId)
     const row = document.getElementById(rowId);
     row.remove();
 }
