@@ -58,7 +58,7 @@
             <td><input type="text" name="ManufactureYear" id="UpdateVehicleFormManufactureYear" value="2024"></td>
             <td><input type="text" name="Mileage" id="UpdateVehicleFormMileage" value="120500"></td>
             <td><input type="text" name="LicensePlate" id="UpdateVehicleFormLicensePlate" value="A000AA"></td>
-            <td><input type="text" name="BrandId" id="UpdateVehicleFormBrand" value="2"></td>
+            <td><select id="UpdateVehicleFormBrand"></select></td>
           </tr>
         </form>
       </thead>
@@ -112,6 +112,7 @@
 <script type="text/javascript">
   getAndDisplayData("/AdminFrontend", displayVehiclesWithManufacturerAndModelName);
   getAndDisplayData("/Brand", displayBrands);
+  populateDropDownEditMenuBrandOption();
 </script>
 
 </html>

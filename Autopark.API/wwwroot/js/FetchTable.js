@@ -35,6 +35,7 @@ function makeRowForVehicleWithManufacturerAndModelName(vehicleWithManufacturerAn
     return row
 }
 
+// unused
 function editVehicleRow(vehicleWithManufacturerAndModelName)
 {
     document.getElementById('vehicle-row-'+vehicleWithManufacturerAndModelName.id)
@@ -77,9 +78,19 @@ function makeUpdateVehicleButton(id) {
     return `<button class="updateBtn" onclick="${updateFunctionName}('${id}')">✏️</button>`;
 }
 
-function openUpdateVehicleMenu(vehicleId) {
+async function openUpdateVehicleMenu(vehicleId) {
+    // TODO add default values from original vehicle value
+    let vehicle;
+    const response = await fetch(apiPath + '/Vehicle/' + vehicleId)
+    vehicle = await response.json()
+
     document.getElementById("EditVehicleDiv").style.display = 'block'; // TODO: rename edit to update, use crud terms
     document.getElementById("UpdateVehicleFormId").innerHTML = vehicleId;
+    document.getElementById("UpdateVehicleFormPrice").value = vehicle.price;
+    document.getElementById("UpdateVehicleFormManufactureYear").value = vehicle.manufactureYear;
+    document.getElementById("UpdateVehicleFormMileage").value = vehicle.mileage;
+    document.getElementById("UpdateVehicleFormLicensePlate").value = vehicle.licensePlate;
+    document.getElementById("UpdateVehicleFormBrand").value = vehicle.brandId;
 }
 
 document.getElementById('SubmitVehicleBtn').addEventListener('click', async function (event) {
@@ -163,4 +174,23 @@ function vehicleTypeIntToStr(vehicleTypeInt) {
         default:
             return "Unknown";
     }
+}
+
+async function populateDropDownEditMenuBrandOption()
+{
+    let allBrands;
+    const response = await fetch(apiPath + '/Brand')
+    allBrands = await response.json()
+
+    var brandsMap = new Map();
+
+    for (const brand of allBrands) {
+        // brandsMap.set(brand.id, brand.manufacturerCompany + " " + brand.modelName)
+        let option = document.createElement("option");
+        option.textContent = brand.manufacturerCompany + " " + brand.modelName;
+        option.value = brand.id;
+        document.getElementById("UpdateVehicleFormBrand").appendChild(option);
+    }
+
+    console.log(brandsMap);
 }
