@@ -9,5 +9,7 @@ namespace Autopark.API
     {
         public const int MaxManufactureYear = 2200;
         public const int MinManufactureYear = 1880;
+        public const int MaxDriverBirthYear = 2020;
+        public const int MinDriverBirthYear = 1900;
     }
 }

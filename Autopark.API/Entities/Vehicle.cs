@@ -14,5 +14,14 @@ namespace Autopark.API.Entities
         public required string LicensePlate { get; set; }
         public long BrandId { get; set; }
         public Brand? Brand { get; set; }
+        public Guid EnterpriseId { get; set; }
+        public Enterprise? Enterprise { get; set; }
+
+        // one to one
+        public Guid? CurrentDriverId { get; set; }
+        public Driver? CurrentDriver { get; set; }
+
+        // many to many
+        public List<Driver> Drivers { get; set; } = new List<Driver>();
     }
 }
