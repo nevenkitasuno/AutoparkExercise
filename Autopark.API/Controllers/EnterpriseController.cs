@@ -26,6 +26,7 @@ namespace Autopark.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ActionName(nameof(GetEnterpriseAsync))] // TODO How to get rid of it? In FreeCodeCamp course works without it
         public async Task<ActionResult<Enterprise>> GetEnterpriseAsync(Guid id)
         {
             var enterprise = await _context.Enterprises.FindAsync(id);
