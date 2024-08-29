@@ -27,7 +27,7 @@ namespace Autopark.API.Controllers
 
         [HttpGet("{id}")]
         [ActionName(nameof(GetBrandAsync))] // TODO Get rid
-        public async Task<ActionResult<Brand>> GetBrandAsync(Guid id)
+        public async Task<ActionResult<Brand>> GetBrandAsync(long id)
         {
             var brand = await _context.Brands.FindAsync(id);
             if (brand == null) return NotFound();

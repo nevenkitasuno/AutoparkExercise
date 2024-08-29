@@ -3,116 +3,13 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Vehicles</title>
+  <title>AutoparkExercise</title>
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-
-  <div class="AddVehicleDiv">
-    <table class="table" border="1">
-      <caption>Add vehicle</caption>
-      <thead>
-        <tr>
-          <th>Add</th>
-          <th>Price</th>
-          <th>ManufactureYear</th>
-          <th>Mileage</th>
-          <th>LicensePlate</th>
-          <th>BrandId</th>
-        </tr>
-        <!-- 415 Unsupported Media Type: <form action="http://127.0.0.1:5237/api/Vehicle" method="post"> -->
-        <form>
-          <tr>
-            <td><input type="submit" value="✅" id="SubmitVehicleBtn"></td>
-            <td><input type="text" name="Price" id="SubmitVehicleFormPrice" value="200000"></td>
-            <td><input type="text" name="ManufactureYear" id="SubmitVehicleFormManufactureYear" value="2024"></td>
-            <td><input type="text" name="Mileage" id="SubmitVehicleFormMileage" value="120500"></td>
-            <td><input type="text" name="LicensePlate" id="SubmitVehicleFormLicensePlate" value="A000AA"></td>
-            <td><input type="text" name="BrandId" id="SubmitVehicleFormBrand" value="2"></td>
-          </tr>
-        </form>
-      </thead>
-      <tbody id="AddVehicle"></tbody>
-    </table>
-  </div>
-
-  <div id="EditVehicleDiv" style="display:none">
-    <br></br>
-    <table class="table" border="1">
-      <caption>Edit vehicle</caption>
-      <thead>
-        <tr>
-          <th>Submit</th>
-          <th>Id</th>
-          <th>Price</th>
-          <th>ManufactureYear</th>
-          <th>Mileage</th>
-          <th>LicensePlate</th>
-          <th>BrandId</th>
-        </tr>
-        <form onsubmit="return updateVehicleAndCloseMenu()">
-          <tr>
-            <td><input type="submit" value="✅" id=UpdateVehicleBtn"></td>
-            <td id="UpdateVehicleFormId"></td>
-            <td><input type="text" name="Price" id="UpdateVehicleFormPrice" value="200000"></td>
-            <td><input type="text" name="ManufactureYear" id="UpdateVehicleFormManufactureYear" value="2024"></td>
-            <td><input type="text" name="Mileage" id="UpdateVehicleFormMileage" value="120500"></td>
-            <td><input type="text" name="LicensePlate" id="UpdateVehicleFormLicensePlate" value="A000AA"></td>
-            <td><select id="UpdateVehicleFormBrand"></select></td>
-          </tr>
-        </form>
-      </thead>
-      <tbody id="AddVehicle"></tbody>
-    </table>
-  </div>
-
-  <br></br>
-
-  <div class="VehiclesTableDiv">
-    <table class="table" border="1">
-      <caption>Vehicles table</caption>
-      <thead>
-        <tr>
-          <th>Delete</th>
-          <th>Edit</th>
-          <th>Id</th>
-          <th>Price</th>
-          <th>ManufactureYear</th>
-          <th>Mileage</th>
-          <th>LicensePlate</th>
-          <th>Brand</th>
-        </tr>
-      </thead>
-      <tbody id="VehiclesTable"></tbody>
-    </table>
-  </div>
-
-  <br></br>
-
-  <div class="BrandsTableDiv">
-    <table class="table" border="1">
-      <caption>Brands table</caption>
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>ManufacturerCompany</th>
-          <th>ModelName</th>
-          <th>EngineDisplacementLiters</th>
-          <th>VehicleType</th>
-          <th>FuelTankCapacityLiters</th>
-          <th>SeatsCount</th>
-          <th>LiftWeightCapacityKg</th>
-        </tr>
-      </thead>
-      <tbody id="BrandsTable"></tbody>
-    </table>
-  </div>
+  <script type="module" src="js/index.js"></script>
+  <x-vehicles-table></x-vehicles-table>
+  <x-brands-table></x-brands-table>
 </body>
-<script src="js/FetchTable.js"></script>
-<script type="text/javascript">
-  getAndDisplayData("/AdminFrontend", displayVehiclesWithManufacturerAndModelName);
-  getAndDisplayData("/Brand", displayBrands);
-  populateDropDownEditMenuBrandOption();
-</script>
-
 </html>
