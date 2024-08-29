@@ -3,6 +3,7 @@ using System;
 using Autopark.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Autopark.API.Migrations
 {
     [DbContext(typeof(AutoparkDbContext))]
-    partial class AutoparkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240819104651_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,7 @@ namespace Autopark.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CurrentVehicleId")
+                    b.Property<Guid>("CurrentVehicleId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -122,7 +125,7 @@ namespace Autopark.API.Migrations
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("CurrentDriverId")
+                    b.Property<Guid>("CurrentDriverId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("EnterpriseId")
@@ -189,7 +192,9 @@ namespace Autopark.API.Migrations
 
                     b.HasOne("Autopark.API.Entities.Driver", "CurrentDriver")
                         .WithOne("CurrentVehicle")
-                        .HasForeignKey("Autopark.API.Entities.Vehicle", "CurrentDriverId");
+                        .HasForeignKey("Autopark.API.Entities.Vehicle", "CurrentDriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Autopark.API.Entities.Enterprise", "Enterprise")
                         .WithMany("Vehicles")

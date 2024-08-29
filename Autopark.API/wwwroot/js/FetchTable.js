@@ -31,6 +31,8 @@ function makeRowForVehicleWithManufacturerAndModelName(vehicleWithManufacturerAn
     row += "<td>" + vehicleWithManufacturerAndModelName.mileage + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.licensePlate + "</td>";
     row += "<td>" + vehicleWithManufacturerAndModelName.manufacturerCompany + " " + vehicleWithManufacturerAndModelName.modelName + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.enterpriseId + "</td>";
+    row += "<td>" + vehicleWithManufacturerAndModelName.currentDriverId + "</td>";
     row += "</tr>"
     return row
 }
@@ -94,7 +96,7 @@ async function openUpdateVehicleMenu(vehicleId) {
 }
 
 document.getElementById('SubmitVehicleBtn').addEventListener('click', async function (event) {
-    // event.preventDefault();
+    event.preventDefault();
 
     const formData = {
         Price: document.getElementById('SubmitVehicleFormPrice').value,
@@ -123,7 +125,7 @@ document.getElementById('SubmitVehicleBtn').addEventListener('click', async func
         console.error('An error occurred during form submission:', error);
     }
 
-    location.reload(); // TODO: Add row instead of page reload
+    // location.reload(); // TODO: Add row instead of page reload
 });
 
 function makeDeleteVehicleButton(id) {
@@ -182,7 +184,7 @@ async function populateDropDownEditMenuBrandOption()
     const response = await fetch(apiPath + '/Brand')
     allBrands = await response.json()
 
-    var brandsMap = new Map();
+    // var brandsMap = new Map();
 
     for (const brand of allBrands) {
         // brandsMap.set(brand.id, brand.manufacturerCompany + " " + brand.modelName)
@@ -191,6 +193,4 @@ async function populateDropDownEditMenuBrandOption()
         option.value = brand.id;
         document.getElementById("UpdateVehicleFormBrand").appendChild(option);
     }
-
-    console.log(brandsMap);
 }
