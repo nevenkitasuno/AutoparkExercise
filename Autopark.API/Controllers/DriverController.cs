@@ -21,8 +21,8 @@ namespace Autopark.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Driver>>> GetAllDriverssAsync()
         {
-            var vehicles = await _context.Drivers.AsNoTracking().ToListAsync();
-            return Ok(vehicles); // TODO return only IDs
+            var drivers = await _context.Drivers.AsNoTracking().ToListAsync();
+            return Ok(drivers.Select(driver => driver.Id));
         }
 
         [HttpGet("{id}")]

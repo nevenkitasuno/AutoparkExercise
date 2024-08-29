@@ -22,7 +22,7 @@ namespace Autopark.API.Controllers
         public async Task<ActionResult<List<Brand>>> GetAllBrandsAsync()
         {
             var brands = await _context.Brands.AsNoTracking().ToListAsync();
-            return Ok(brands);
+            return Ok(brands.Select(brand => brand.Id));
         }
 
         [HttpGet("{id}")]
