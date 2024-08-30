@@ -1,4 +1,4 @@
-import { getAllEntitiesAsync } from "./FetchUtils.js"
+import { getAllEntitiesAsync } from "./FetchGetUtils.js"
 
 export function vehicleTypeIntToStr(vehicleTypeInt) {
     if (typeof vehicleTypeInt === "string") vehicleTypeInt = parseInt(vehicleTypeInt)

@@ -7,6 +7,8 @@ class VehiclesTableComponent extends HTMLElement {
         var table = await createTableFromGetRequestAsync("VehiclesTable", "Vehicle")
         this.appendChild(table)
         mapTableColumnAsync(table.id, "brandId", brandIdToBrandNameAsync)
+
+        // deleteTableColumn(table.id, "brand")
     }
 }
 
