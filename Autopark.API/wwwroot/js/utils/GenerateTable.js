@@ -1,10 +1,24 @@
 import { getAllEntitiesAsync } from "../utils/FetchUtils.js";
 
+function removeFieldsWithArrayType(obj)
+{
+    for (let key in obj) {
+        if (Array.isArray(obj[key])) {
+            delete obj[key];
+        }
+    }
+    return obj;
+}
+
 export async function createTableFromGetRequestAsync(tableId, controllerName) {
     var Table = document.createElement("table")
     Table.id = tableId
 
     let data = await getAllEntitiesAsync(controllerName)
+
+    for (let i in data) {
+        data[i] = removeFieldsWithArrayType(data[i])
+    }
 
     generateTable(Table, data)
     generateTableHead(Table, data[0])

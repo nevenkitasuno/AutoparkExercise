@@ -1,5 +1,5 @@
-import { registerVehiclesTableComponent } from './components/VehiclesTable.js';
-import { registerBrandsTableComponent } from './components/BrandsTable.js';
+import { registerVehiclesTableComponent } from './components/Vehicle/VehiclesTable.js';
+import { registerBrandsTableComponent } from './components/Brand/BrandsTable.js';
 const app = () => {
     registerVehiclesTableComponent();
     registerBrandsTableComponent();

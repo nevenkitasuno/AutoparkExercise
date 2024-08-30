@@ -1,6 +1,6 @@
-import { createTableFromGetRequestAsync } from "../utils/GenerateTable.js";
-import { mapTableColumnAsync } from "../utils/TableUtils.js";
-import { vehicleTypeIntToStr } from "../utils/Converters.js";
+import { createTableFromGetRequestAsync } from "../../utils/GenerateTable.js";
+import { mapTableColumnAsync } from "../../utils/TableUtils.js";
+import { vehicleTypeIntToStr } from "../../utils/Converters.js";
 
 class BrandsTableComponent extends HTMLElement {
     async connectedCallback() {
