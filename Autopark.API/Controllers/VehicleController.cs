@@ -28,11 +28,24 @@ namespace Autopark.API.Controllers
 
         [HttpGet("{id}")]
         [ActionName(nameof(GetVehicleAsync))] // TODO How to get rid of it? In FreeCodeCamp course works without it
-        public async Task<ActionResult<Vehicle>> GetVehicleAsync(Guid id)
+        public async Task<ActionResult<GetVehicleDto>> GetVehicleAsync(Guid id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null) return NotFound();
-            return vehicle;
+
+            var getVehicleDto = new GetVehicleDto
+            (
+                vehicle.Id,
+                vehicle.LicensePlate,
+                vehicle.Price,
+                vehicle.ManufactureYear,
+                vehicle.Mileage,
+                vehicle.BrandId,
+                vehicle.EnterpriseId,
+                vehicle.CurrentDriverId
+            );
+
+            return getVehicleDto;
         }
 
         [HttpPost]

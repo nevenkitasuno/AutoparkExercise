@@ -1,4 +1,4 @@
-import { apiPath } from "./../options.js";
+import { apiPath } from "../options.js";
 
 async function getAllIDsAsync(controllerName) {
     let IDs
