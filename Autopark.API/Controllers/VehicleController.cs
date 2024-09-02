@@ -58,7 +58,9 @@ namespace Autopark.API.Controllers
                 ManufactureYear = upsertVehicleDto.ManufactureYear,
                 Mileage = upsertVehicleDto.Mileage,
                 LicensePlate = upsertVehicleDto.LicensePlate,
-                BrandId = upsertVehicleDto.BrandId
+                BrandId = upsertVehicleDto.BrandId,
+                EnterpriseId = upsertVehicleDto.EnterpriseId,
+                CurrentDriverId = upsertVehicleDto.CurrentDrvierId
             };
 
             _context.Vehicles.Add(vehicle);
@@ -78,6 +80,8 @@ namespace Autopark.API.Controllers
             vehicle.Mileage = upsertVehicleDto.Mileage;
             vehicle.LicensePlate = upsertVehicleDto.LicensePlate;
             vehicle.BrandId = upsertVehicleDto.BrandId;
+            vehicle.EnterpriseId = upsertVehicleDto.EnterpriseId;
+            vehicle.CurrentDriverId = upsertVehicleDto.CurrentDrvierId;
 
             // _context.Entry(vehicle).State = EntityState.Modified;
             await _context.SaveChangesAsync();

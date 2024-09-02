@@ -9,7 +9,7 @@ namespace Autopark.API.Dtos.Enterprise
     public record GetEnterpriseDto
     (
         [Required] Guid Id,
-        [Required] string City,
-        [Required] string Name
+        [Required] string Name,
+        [Required] string City
     );
 }
