@@ -57,7 +57,8 @@ namespace Autopark.API.Controllers
                 Patronymic = upsertDriverDto.Patronymic,
                 DateOfBirth = upsertDriverDto.DateOfBirth,
                 Salary = upsertDriverDto.Salary,
-                EnterpriseId = upsertDriverDto.EnterpriseId
+                EnterpriseId = upsertDriverDto.EnterpriseId,
+                CurrentVehicleId = upsertDriverDto.CurrentVehicleId
             };
             _context.Drivers.Add(driver);
             await _context.SaveChangesAsync();
@@ -76,6 +77,7 @@ namespace Autopark.API.Controllers
             driver.DateOfBirth = upsertDriverDto.DateOfBirth;
             driver.Salary = upsertDriverDto.Salary;
             driver.EnterpriseId = upsertDriverDto.EnterpriseId;
+            driver.CurrentVehicleId = upsertDriverDto.CurrentVehicleId;
 
             await _context.SaveChangesAsync();
 

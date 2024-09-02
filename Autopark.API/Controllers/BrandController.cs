@@ -68,7 +68,7 @@ namespace Autopark.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBrandAsync(Guid id, UpsertBrandDto upsertBrandDto)
+        public async Task<IActionResult> UpdateBrandAsync(long id, UpsertBrandDto upsertBrandDto)
         {
             var brand = await _context.Brands.FindAsync(id);
             if (brand == null) return NotFound();

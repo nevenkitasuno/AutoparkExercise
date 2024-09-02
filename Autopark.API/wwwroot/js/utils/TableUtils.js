@@ -1,13 +1,33 @@
+export function mapTableColumnAndChangeTitle(tableId, currentColumnName, newColumnName, funcToMap)
+{
+    mapTableColumn(tableId, currentColumnName, funcToMap)
+    changeTitleForTableColumn(tableId, currentColumnName, newColumnName)
+}
+
+export async function mapTableColumnAndChangeTitleAsync(tableId, currentColumnName, newColumnName, funcToMap)
+{
+    await mapTableColumnAsync(tableId, currentColumnName, funcToMap)
+    changeTitleForTableColumn(tableId, currentColumnName, newColumnName)
+}
+
 export function mapTableColumn(tableId, columnName, func)
 {
     var table = document.getElementById(tableId);
     var tbodyRowCount = table.tBodies[0].rows.length;
     for (var i = 0; i < tbodyRowCount; i++)
     {
-        var cellId = table.Id + "-" + columnName + "-R" + i
+        var cellId = table.id + "-" + columnName + "-R" + i
         var cell = document.getElementById(cellId);
         cell.textContent = func(cell.textContent);
     }
+}
+
+export function changeTitleForTableColumn(tableId, columnName, newName)
+{
+    var table = document.getElementById(tableId);
+    var thId = table.id + "-" + columnName + "-Head"
+    var th = document.getElementById(thId)
+    th.textContent = newName;
 }
 
 export function deleteTableColumn(tableId, columnName)
