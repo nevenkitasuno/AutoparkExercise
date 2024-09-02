@@ -27,11 +27,24 @@ namespace Autopark.API.Controllers
 
         [HttpGet("{id}")]
         [ActionName(nameof(GetDriverAsync))] // TODO How to get rid of it? In FreeCodeCamp course works without it
-        public async Task<ActionResult<Driver>> GetDriverAsync(Guid id)
+        public async Task<ActionResult<GetDriverDto>> GetDriverAsync(Guid id)
         {
             var driver = await _context.Drivers.FindAsync(id);
             if (driver == null) return NotFound();
-            return driver;
+
+            var getDriverDto = new GetDriverDto
+            (
+                driver.Id,
+                driver.FirstName,
+                driver.Surname,
+                driver.Patronymic,
+                driver.DateOfBirth,
+                driver.Salary,
+                driver.EnterpriseId,
+                driver.CurrentVehicleId
+            );
+
+            return getDriverDto;
         }
 
         [HttpPost]
@@ -49,6 +62,36 @@ namespace Autopark.API.Controllers
             _context.Drivers.Add(driver);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetDriverAsync), new { id = driver.Id }, driver);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateDriverAsync(Guid id, UpsertDriverDto upsertDriverDto)
+        {
+            var driver = await _context.Drivers.FindAsync(id);
+            if (driver == null) return NotFound();
+
+            driver.FirstName = upsertDriverDto.FirstName;
+            driver.Surname = upsertDriverDto.Surname;
+            driver.Patronymic = upsertDriverDto.Patronymic;
+            driver.DateOfBirth = upsertDriverDto.DateOfBirth;
+            driver.Salary = upsertDriverDto.Salary;
+            driver.EnterpriseId = upsertDriverDto.EnterpriseId;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDriverAsync(Guid id)
+        {
+            var driver = await _context.Drivers.FindAsync(id);
+            if (driver == null) return NotFound();
+
+            _context.Drivers.Remove(driver);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

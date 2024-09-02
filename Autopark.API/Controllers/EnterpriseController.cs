@@ -27,11 +27,19 @@ namespace Autopark.API.Controllers
 
         [HttpGet("{id}")]
         [ActionName(nameof(GetEnterpriseAsync))] // TODO How to get rid of it? In FreeCodeCamp course works without it
-        public async Task<ActionResult<Enterprise>> GetEnterpriseAsync(Guid id)
+        public async Task<ActionResult<GetEnterpriseDto>> GetEnterpriseAsync(Guid id)
         {
             var enterprise = await _context.Enterprises.FindAsync(id);
             if (enterprise == null) return NotFound();
-            return enterprise;
+
+            var getEnterpriseDto = new GetEnterpriseDto
+            (
+                enterprise.Id,
+                enterprise.Name,
+                enterprise.City
+            );
+
+            return getEnterpriseDto;
         }
 
         [HttpPost]
@@ -45,6 +53,31 @@ namespace Autopark.API.Controllers
             _context.Enterprises.Add(enterprise);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEnterpriseAsync), new { id = enterprise.Id }, enterprise);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEnterpriseAsync(Guid id, UpsertEnterpriseDto upsertEnterpriseDto)
+        {
+            var enterprise = await _context.Enterprises.FindAsync(id);
+            if (enterprise == null) return NotFound();
+
+            enterprise.Name = upsertEnterpriseDto.Name;
+            enterprise.City = upsertEnterpriseDto.City;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEnterpriseAsync(Guid id)
+        {
+            var enterprise = await _context.Enterprises.FindAsync(id);
+            if (enterprise == null) return NotFound();
+
+            _context.Enterprises.Remove(enterprise);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

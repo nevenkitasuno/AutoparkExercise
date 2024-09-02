@@ -13,7 +13,7 @@ namespace Autopark.API.Entities
         public string? Patronymic { get; set; }
         public DateTime DateOfBirth { get; set; }
         public decimal Salary { get; set; }
-        public Guid EnterpriseId { get; set; }
+        public Guid? EnterpriseId { get; set; }
         public Enterprise? Enterprise { get; set; }
         
         // one to one
