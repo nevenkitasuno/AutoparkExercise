@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Autopark.API.Data;
 using Autopark.API.Dtos.Driver;
+using Autopark.API.Dtos.Vehicle;
 using Autopark.API.Entities;
+using Autopark.API.Entities.Conversions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +17,7 @@ namespace Autopark.API.Controllers
         public DriverController(AutoparkDbContext context) { _context = context; }
 
         [HttpGet]
-        public async Task<ActionResult<List<Driver>>> GetAllDriverssAsync()
+        public async Task<ActionResult<List<Driver>>> GetAllDriversAsync()
         {
             var drivers = await _context.Drivers.AsNoTracking().ToListAsync();
             return Ok(drivers.Select(driver => driver.Id));
@@ -44,7 +42,7 @@ namespace Autopark.API.Controllers
                 driver.CurrentVehicleId
             );
 
-            return getDriverDto;
+            return Ok(getDriverDto);
         }
 
         [HttpPost]
@@ -94,6 +92,15 @@ namespace Autopark.API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("{id}/vehicles")]
+        public async Task<ActionResult<List<GetVehicleDto>>> GetDriversAsync(Guid id)
+        {
+            var vehicles = await _context.Vehicles
+                .Where(vehicles => vehicles.Drivers.Select(driver => driver.Id).Contains(id))
+                .Select(vehicle => vehicle.AsGetDto()).ToListAsync();
+            return Ok(vehicles);
         }
     }
 }

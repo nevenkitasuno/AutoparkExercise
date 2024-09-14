@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.Data;
+using Autopark.API.Dtos.Driver;
 using Autopark.API.Dtos.Vehicle;
 using Autopark.API.Entities;
+using Autopark.API.Entities.Conversions;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,20 +32,10 @@ namespace Autopark.API.Controllers
         [ActionName(nameof(GetVehicleAsync))] // TODO How to get rid of it? In FreeCodeCamp course works without it
         public async Task<ActionResult<GetVehicleDto>> GetVehicleAsync(Guid id)
         {
-            var vehicle = await _context.Vehicles.FindAsync(id);
+            var vehicle = await _context.Vehicles.Include(v => v.Drivers).FirstOrDefaultAsync(v => v.Id == id);
             if (vehicle == null) return NotFound();
 
-            var getVehicleDto = new GetVehicleDto
-            (
-                vehicle.Id,
-                vehicle.LicensePlate,
-                vehicle.Price,
-                vehicle.ManufactureYear,
-                vehicle.Mileage,
-                vehicle.BrandId,
-                vehicle.EnterpriseId,
-                vehicle.CurrentDriverId
-            );
+            var getVehicleDto = vehicle.AsGetDto();
 
             return getVehicleDto;
         }
@@ -96,6 +88,31 @@ namespace Autopark.API.Controllers
             if (vehicle == null) return NotFound();
 
             _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet("{id}/drivers")]
+        public async Task<ActionResult<List<GetDriverDto>>> GetDriversAsync(Guid id)
+        {
+            var drivers = await _context.Drivers
+                .Where(driver => driver.Vehicles.Select(vehicle => vehicle.Id).Contains(id))
+                .Select(driver => driver.AsGetDto()).ToListAsync();
+            return Ok(drivers);
+        }
+
+        [HttpPut("{id}/drivers/{driverId}")]
+        public async Task<IActionResult> AddDriverAsync(Guid id, Guid driverId)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null) return NotFound();
+
+            var driver = await _context.Drivers.FindAsync(driverId);
+            if (driver == null) return NotFound();
+
+            vehicle.Drivers.Add(driver);
+            driver.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
             return NoContent();
