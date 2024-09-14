@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.Data;
 using Autopark.API.Dtos.Enterprise;
+using Autopark.API.Dtos.Vehicle;
 using Autopark.API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,13 @@ namespace Autopark.API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("{id}/vehicles")]
+        public async Task<ActionResult<List<GetVehicleDto>>> GetVehiclesAsync(Guid id)
+        {
+            var vehicles = await _context.Vehicles.Where(vehicle => vehicle.EnterpriseId == id).ToListAsync();
+            return Ok(vehicles);
         }
     }
 }
