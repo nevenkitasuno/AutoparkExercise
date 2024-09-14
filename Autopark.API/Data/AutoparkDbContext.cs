@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.EFConfigurations;
 using Autopark.API.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Autopark.API.Data
 {
-    public class AutoparkDbContext : DbContext
+    public class AutoparkDbContext : IdentityDbContext<Manager>
     {
         public AutoparkDbContext(DbContextOptions<AutoparkDbContext> options) : base(options){}
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -20,6 +21,8 @@ namespace Autopark.API.Data
         {
             modelBuilder.ApplyConfiguration(new DriverConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
+
+            modelBuilder.HasDefaultSchema("identity");
 
             base.OnModelCreating(modelBuilder);
         }

@@ -12,5 +12,6 @@ namespace Autopark.API.Entities
         public required string Name { get; set; }
         public List<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         public List<Driver> Drivers { get; set; } = new List<Driver>();
+        public List<Manager> Managers { get; set; } = new List<Manager>();
     }
 }
