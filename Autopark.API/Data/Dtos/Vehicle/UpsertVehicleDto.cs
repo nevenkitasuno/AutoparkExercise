@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Autopark.API.Dtos.Vehicle
+namespace Autopark.API.Data.Dtos.Vehicle
 {
     public record UpsertVehicleDto
     (

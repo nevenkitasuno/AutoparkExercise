@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.Entities;
 
-namespace Autopark.API.Dtos.Brand
+namespace Autopark.API.Data.Dtos.Brand
 {
-    public record UpsertBrandDto
+    public record GetBrandDto
     (
+        [Required] long Id, // maybe there is a way to inherit Upsert record and just add id?
         [Required] string ManufacturerCompany,
         [Required] string ModelName,
         [Range(0, double.PositiveInfinity, ErrorMessage = "Only non-negative number allowed")] decimal EngineDisplacementLiters,

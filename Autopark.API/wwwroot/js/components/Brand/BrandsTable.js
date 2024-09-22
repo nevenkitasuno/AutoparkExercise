@@ -4,7 +4,7 @@ import { vehicleTypeIntToStr } from "../../utils/Converters.js";
 
 class BrandsTableComponent extends HTMLElement {
     async connectedCallback() {
-        var table = await createTableFromGetRequestAsync("BrandsTable", "Brand")
+        const table = await createTableFromGetRequestAsync("BrandsTable", "Brand")
         this.appendChild(table)
         mapTableColumnAsync(table.id, "vehicleType", vehicleTypeIntToStr)
     }

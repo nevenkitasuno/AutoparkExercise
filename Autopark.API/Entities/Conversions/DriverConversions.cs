@@ -1,10 +1,10 @@
-using Autopark.API.Dtos.Driver;
+using Autopark.API.Data.Dtos.Driver;
 
 namespace Autopark.API.Entities.Conversions
 {
     public static class DriverConversions
     {
-        public static GetDriverDto AsGetDto(this Driver driver) {
+        public static GetDriverDto AsDto(this Driver driver) {
             return new GetDriverDto
             (
                 driver.Id,

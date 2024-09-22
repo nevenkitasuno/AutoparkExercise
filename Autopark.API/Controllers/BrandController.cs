@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.Data;
 using Autopark.API.Entities;
-using Autopark.API.Dtos.Brand;
+using Autopark.API.Data.Dtos.Brand;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Autopark.API.Entities.Conversions;
 
 namespace Autopark.API.Controllers
 {
@@ -22,7 +23,7 @@ namespace Autopark.API.Controllers
         public async Task<ActionResult<List<Brand>>> GetAllBrandsAsync()
         {
             var brands = await _context.Brands.AsNoTracking().ToListAsync();
-            return Ok(brands.Select(brand => brand.Id));
+            return Ok(brands.Select(brand => brand.AsDto()));
         }
 
         [HttpGet("{id}")]

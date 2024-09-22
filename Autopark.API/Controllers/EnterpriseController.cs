@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Autopark.API.Data;
-using Autopark.API.Dtos.Enterprise;
-using Autopark.API.Dtos.Vehicle;
+using Autopark.API.Data.Dtos.Enterprise;
+using Autopark.API.Data.Dtos.Vehicle;
 using Autopark.API.Entities;
+using Autopark.API.Entities.Conversions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Autopark.API.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Identity.Application")]
     [Route("api/[controller]")]
     [ApiController]
     public class EnterpriseController : ControllerBase
@@ -20,10 +24,16 @@ namespace Autopark.API.Controllers
         public EnterpriseController(AutoparkDbContext context) { _context = context; }
 
         [HttpGet]
-        public async Task<ActionResult<List<Enterprise>>> GetAllEnterprisesAsync()
+        public async Task<ActionResult<List<GetEnterpriseDto>>> GetAllEnterprisesAsync()
         {
-            var enterprises = await _context.Enterprises.AsNoTracking().ToListAsync();
-            return Ok(enterprises.Select(enterprise => enterprise.Id));
+            var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var enterprises = await _context.Enterprises
+                // .Where(enterprise => loggedManager.Enterprises.Select(ent => ent.Id).Contains(enterprise.Id))
+                .Where(enterprise => enterprise.Managers.Select(manager => manager.Id).Contains(loggedUserId))
+                .Select(enterprise => enterprise.AsDto()).ToListAsync();
+
+            return Ok(enterprises);
         }
 
         [HttpGet("{id}")]

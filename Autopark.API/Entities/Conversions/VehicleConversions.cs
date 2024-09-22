@@ -1,10 +1,10 @@
-using Autopark.API.Dtos.Vehicle;
+using Autopark.API.Data.Dtos.Vehicle;
 
 namespace Autopark.API.Entities.Conversions
 {
     public static class VehicleConversions
     {
-        public static GetVehicleDto AsGetDto(this Vehicle vehicle) {
+        public static GetVehicleDto AsDto(this Vehicle vehicle) {
             return new GetVehicleDto
             (
                 vehicle.Id,
@@ -14,8 +14,8 @@ namespace Autopark.API.Entities.Conversions
                 vehicle.Mileage,
                 vehicle.BrandId,
                 vehicle.EnterpriseId,
-                vehicle.CurrentDriverId,
-                vehicle.Drivers.Select(driver => driver.Id).ToList()
+                vehicle.CurrentDriverId
+                // vehicle.Drivers.Select(driver => driver.Id).ToList()
             );
         }
     }

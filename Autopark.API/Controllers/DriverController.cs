@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using Autopark.API.Data;
-using Autopark.API.Dtos.Driver;
-using Autopark.API.Dtos.Vehicle;
+using Autopark.API.Data.Dtos.Driver;
+using Autopark.API.Data.Dtos.Vehicle;
 using Autopark.API.Entities;
 using Autopark.API.Entities.Conversions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,7 @@ namespace Autopark.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Identity.Application")]
     public class DriverController : ControllerBase
     {
         private readonly AutoparkDbContext _context;
@@ -17,10 +20,17 @@ namespace Autopark.API.Controllers
         public DriverController(AutoparkDbContext context) { _context = context; }
 
         [HttpGet]
-        public async Task<ActionResult<List<Driver>>> GetAllDriversAsync()
+        public async Task<ActionResult<List<GetDriverDto>>> GetAllDriversAsync()
         {
-            var drivers = await _context.Drivers.AsNoTracking().ToListAsync();
-            return Ok(drivers.Select(driver => driver.Id));
+            var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
+
+            var drivers = await _context.Drivers
+                .Where(driver => driver.EnterpriseId.HasValue && enterpriseIds.Contains(driver.EnterpriseId.Value))
+                .Select(driver => driver.AsDto()).ToListAsync();
+
+            return Ok(drivers);
         }
 
         [HttpGet("{id}")]
@@ -99,7 +109,7 @@ namespace Autopark.API.Controllers
         {
             var vehicles = await _context.Vehicles
                 .Where(vehicles => vehicles.Drivers.Select(driver => driver.Id).Contains(id))
-                .Select(vehicle => vehicle.AsGetDto()).ToListAsync();
+                .Select(vehicle => vehicle.AsDto()).ToListAsync();
             return Ok(vehicles);
         }
     }

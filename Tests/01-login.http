@@ -1,0 +1,5 @@
+curl --header "Content-Type: application/json"
+    --data '{"email":"vasilyPetrovich@mail.ry","password":"SuperParol123"}'
+    --request POST
+    'http://localhost:5237/identity/login'
+

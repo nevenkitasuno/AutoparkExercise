@@ -6,6 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5237")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddControllers();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,6 +46,8 @@ builder.Services.AddDbContext<AutoparkDbContext>(options =>
 
 var app = builder.Build();
 
+app.UseCors("AllowOrigin");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -46,6 +59,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseDefaultFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGroup("/identity").MapIdentityApi<Manager>(); 
 app.MapControllers();
