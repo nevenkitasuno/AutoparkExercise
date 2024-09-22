@@ -63,7 +63,7 @@ namespace Autopark.API.Controllers
             };
             _context.Enterprises.Add(enterprise);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetEnterpriseAsync), new { id = enterprise.Id }, enterprise);
+            return CreatedAtAction(nameof(GetEnterpriseAsync), new { id = enterprise.Id }, enterprise.AsDto());
         }
 
         [HttpPut("{id}")]

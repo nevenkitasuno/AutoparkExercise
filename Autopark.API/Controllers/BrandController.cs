@@ -65,7 +65,7 @@ namespace Autopark.API.Controllers
             _context.Brands.Add(brand);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBrandAsync), new { id = brand.Id }, brand);
+            return CreatedAtAction(nameof(GetBrandAsync), new { id = brand.Id }, brand.AsDto());
         }
 
         [HttpPut("{id}")]

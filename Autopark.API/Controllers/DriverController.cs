@@ -70,7 +70,7 @@ namespace Autopark.API.Controllers
             };
             _context.Drivers.Add(driver);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetDriverAsync), new { id = driver.Id }, driver);
+            return CreatedAtAction(nameof(GetDriverAsync), new { id = driver.Id }, driver.AsDto());
         }
 
         [HttpPut("{id}")]
