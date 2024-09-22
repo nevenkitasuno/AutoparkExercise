@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.Data;
 using Autopark.API.Entities;
-using Autopark.API.Data.Dtos.Brand;
+using Autopark.API.Entities.Dtos.Brand;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Autopark.API.Entities.Conversions;

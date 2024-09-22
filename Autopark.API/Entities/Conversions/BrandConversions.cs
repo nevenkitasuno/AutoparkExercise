@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Autopark.API.Data.Dtos.Brand;
+using Autopark.API.Entities.Dtos.Brand;
 
 namespace Autopark.API.Entities.Conversions
 {

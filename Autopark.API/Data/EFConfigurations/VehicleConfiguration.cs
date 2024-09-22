@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Autopark.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Autopark.API.EFConfigurations
+namespace Autopark.API.Data.EFConfigurations
 {
     public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
     {

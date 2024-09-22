@@ -2,7 +2,7 @@ using Autopark.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Autopark.API.EFConfigurations
+namespace Autopark.API.Data.EFConfigurations
 {
     public class DriverConfiguration : IEntityTypeConfiguration<Driver>
     {

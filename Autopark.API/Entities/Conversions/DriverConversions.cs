@@ -1,4 +1,4 @@
-using Autopark.API.Data.Dtos.Driver;
+using Autopark.API.Entities.Dtos.Driver;
 
 namespace Autopark.API.Entities.Conversions
 {

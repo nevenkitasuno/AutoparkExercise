@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Autopark.API.Data;
-using Autopark.API.Data.Dtos.Driver;
-using Autopark.API.Data.Dtos.Vehicle;
+using Autopark.API.Entities.Dtos.Driver;
+using Autopark.API.Entities.Dtos.Vehicle;
 using Autopark.API.Entities;
 using Autopark.API.Entities.Conversions;
 using Microsoft.AspNetCore.Authorization;

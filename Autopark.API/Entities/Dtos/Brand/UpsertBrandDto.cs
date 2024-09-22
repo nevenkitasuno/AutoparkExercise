@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autopark.API.Entities;
 
-namespace Autopark.API.Data.Dtos.Brand
+namespace Autopark.API.Entities.Dtos.Brand
 {
     public record UpsertBrandDto
     (
