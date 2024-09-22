@@ -9,6 +9,25 @@ import (
 	"time"
 )
 
+const (
+	countOfVehiclesToPost = 100
+	baseURL               = "http://localhost:5237"
+	enterpriseId          = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+	dateOfBirthYearFrom   = 1900
+	dateOfBirthYearTo     = 2020
+	manufactureYearFrom   = 1900
+	manufactureYearTo     = 2020
+	priceFrom             = 50000
+	priceTo               = 2000000
+	mileageFrom           = 500000
+	mileageTo             = 200000
+)
+
+var loginData = map[string]string{
+	"email":    "vasilyPetrovich@mail.ry",
+	"password": "SuperParol123",
+}
+
 type Driver struct {
 	FirstName        string    `json:"firstName"`
 	Surname          string    `json:"surname"`
@@ -16,7 +35,7 @@ type Driver struct {
 	DateOfBirth      time.Time `json:"dateOfBirth"`
 	Salary           int       `json:"salary"`
 	EnterpriseId     string    `json:"enterpriseId"`
-	CurrentVehicleId string    `json:"currentVehicleId"`
+	CurrentVehicleId string    `json:"currentVehicleId,omitempty"`
 }
 
 type Vehicle struct {
@@ -26,7 +45,7 @@ type Vehicle struct {
 	Mileage         int    `json:"mileage"`
 	BrandId         int    `json:"brandId"`
 	EnterpriseId    string `json:"enterpriseId"`
-	CurrentDriverId string `json:"currentDriverId"`
+	CurrentDriverId string `json:"currentDriverId,omitempty"`
 }
 
 type LoginResponse struct {
@@ -53,17 +72,13 @@ func generateLicensePlate() string {
 	return string(licensePlate)
 }
 
-func generateRandomYear() int {
-	return rand.Intn(121) + 1900 // Random year between 1900 and 2020
-}
-
-func generateRandomSalaryOrPrice() int {
-	return rand.Intn(150001) + 50000 // Random between 50000 and 200000
+func generateRandomValue(min, max int) int {
+	return rand.Intn(max-min+1) + min
 }
 
 func postDriver(driver Driver, token string) (string, error) {
 	body, _ := json.Marshal(driver)
-	req, err := http.NewRequest("POST", "http://localhost:5237/api/Driver", bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", baseURL+"/api/Driver", bytes.NewBuffer(body))
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +106,7 @@ func postDriver(driver Driver, token string) (string, error) {
 
 func postVehicle(vehicle Vehicle, token string) error {
 	body, _ := json.Marshal(vehicle)
-	req, err := http.NewRequest("POST", "http://localhost:5237/api/Vehicle", bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", baseURL+"/api/Vehicle", bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
@@ -113,12 +128,8 @@ func postVehicle(vehicle Vehicle, token string) error {
 }
 
 func login() (string, error) {
-	loginData := map[string]string{
-		"email":    "vasilyPetrovich@mail.ry",
-		"password": "SuperParol123",
-	}
 	body, _ := json.Marshal(loginData)
-	req, err := http.NewRequest("POST", "http://localhost:5237/identity/login", bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", baseURL+"/identity/login", bytes.NewBuffer(body))
 	if err != nil {
 		return "", err
 	}
@@ -152,21 +163,22 @@ func main() {
 		return
 	}
 
-	enterpriseId := "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 	var currentDriverId string
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < countOfVehiclesToPost; i++ {
 		driver := Driver{
 			FirstName:    firstNames[rand.Intn(len(firstNames))],
 			Surname:      surnames[rand.Intn(len(surnames))],
 			Patronymic:   patronymics[rand.Intn(len(patronymics))],
-			DateOfBirth:  time.Date(rand.Intn(121)+1900, time.Month(rand.Intn(12)+1), rand.Intn(28)+1, 0, 0, 0, 0, time.UTC),
-			Salary:       generateRandomSalaryOrPrice(),
+			DateOfBirth:  time.Date(generateRandomValue(dateOfBirthYearFrom, dateOfBirthYearTo), time.Month(rand.Intn(12)+1), rand.Intn(28)+1, 0, 0, 0, 0, time.UTC),
+			Salary:       generateRandomValue(50000, 200000),
 			EnterpriseId: enterpriseId,
 		}
 
 		if i%10 == 0 {
 			driver.CurrentVehicleId = currentDriverId // Every 10th driver has a valid vehicle ID
+		} else {
+			driver.CurrentVehicleId = "" // Otherwise, the vehicle ID is empty
 		}
 
 		driverId, err := postDriver(driver, token)
@@ -174,16 +186,20 @@ func main() {
 			fmt.Println("Error posting driver:", err)
 			continue
 		}
-		currentDriverId = driverId // Store the latest driver ID
 
 		vehicle := Vehicle{
 			LicensePlate:    generateLicensePlate(),
-			Price:           generateRandomSalaryOrPrice(),
-			ManufactureYear: generateRandomYear(),
-			Mileage:         generateRandomSalaryOrPrice(),
+			Price:           generateRandomValue(priceFrom, priceTo),
+			ManufactureYear: generateRandomValue(manufactureYearFrom, manufactureYearTo),
+			Mileage:         generateRandomValue(mileageFrom, mileageTo),
 			BrandId:         2,
 			EnterpriseId:    enterpriseId,
-			CurrentDriverId: currentDriverId,
+		}
+
+		if i%10 == 0 {
+			vehicle.CurrentDriverId = driverId // Every 10th vehicle has a valid driver ID
+		} else {
+			vehicle.CurrentDriverId = "" // Otherwise, the driver ID is empty
 		}
 
 		if err := postVehicle(vehicle, token); err != nil {
