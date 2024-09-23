@@ -13,7 +13,6 @@ namespace Autopark.API.Entities
         public Enterprise? Enterprise { get; set; }
 
         // one to one
-        public Guid? CurrentDriverId { get; set; }
         public Driver? CurrentDriver { get; set; }
 
         // many to many

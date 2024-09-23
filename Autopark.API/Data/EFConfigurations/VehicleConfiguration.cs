@@ -11,11 +11,9 @@ namespace Autopark.API.Data.EFConfigurations
     {
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vehicle> builder)
         {
-            builder.ToTable("vehicles");
-
             builder.HasOne(v => v.CurrentDriver)
                 .WithOne(d => d.CurrentVehicle)
-                .HasForeignKey<Vehicle>(v => v.CurrentDriverId);
+                .HasForeignKey<Driver>(d => d.CurrentVehicleId);
 
             builder.HasMany(v => v.Drivers)
                 .WithMany(d => d.Vehicles);

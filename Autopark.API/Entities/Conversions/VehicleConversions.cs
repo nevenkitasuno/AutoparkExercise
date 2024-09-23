@@ -13,8 +13,7 @@ namespace Autopark.API.Entities.Conversions
                 vehicle.ManufactureYear,
                 vehicle.Mileage,
                 vehicle.BrandId,
-                vehicle.EnterpriseId,
-                vehicle.CurrentDriverId
+                vehicle.EnterpriseId
                 // vehicle.Drivers.Select(driver => driver.Id).ToList()
             );
         }

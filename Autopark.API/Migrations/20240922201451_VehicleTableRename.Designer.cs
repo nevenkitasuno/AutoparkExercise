@@ -3,6 +3,7 @@ using System;
 using Autopark.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Autopark.API.Migrations
 {
     [DbContext(typeof(AutoparkDbContext))]
-    partial class AutoparkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240922201451_VehicleTableRename")]
+    partial class VehicleTableRename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,9 +92,6 @@ namespace Autopark.API.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CurrentVehicleId")
-                        .IsUnique();
 
                     b.HasIndex("EnterpriseId");
 
@@ -190,6 +190,9 @@ namespace Autopark.API.Migrations
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid?>("CurrentDriverId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("EnterpriseId")
                         .HasColumnType("uuid");
 
@@ -209,6 +212,9 @@ namespace Autopark.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
+
+                    b.HasIndex("CurrentDriverId")
+                        .IsUnique();
 
                     b.HasIndex("EnterpriseId");
 
@@ -379,15 +385,9 @@ namespace Autopark.API.Migrations
 
             modelBuilder.Entity("Autopark.API.Entities.Driver", b =>
                 {
-                    b.HasOne("Autopark.API.Entities.Vehicle", "CurrentVehicle")
-                        .WithOne("CurrentDriver")
-                        .HasForeignKey("Autopark.API.Entities.Driver", "CurrentVehicleId");
-
                     b.HasOne("Autopark.API.Entities.Enterprise", "Enterprise")
                         .WithMany("Drivers")
                         .HasForeignKey("EnterpriseId");
-
-                    b.Navigation("CurrentVehicle");
 
                     b.Navigation("Enterprise");
                 });
@@ -400,11 +400,17 @@ namespace Autopark.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Autopark.API.Entities.Driver", "CurrentDriver")
+                        .WithOne("CurrentVehicle")
+                        .HasForeignKey("Autopark.API.Entities.Vehicle", "CurrentDriverId");
+
                     b.HasOne("Autopark.API.Entities.Enterprise", "Enterprise")
                         .WithMany("Vehicles")
                         .HasForeignKey("EnterpriseId");
 
                     b.Navigation("Brand");
+
+                    b.Navigation("CurrentDriver");
 
                     b.Navigation("Enterprise");
                 });
@@ -495,16 +501,16 @@ namespace Autopark.API.Migrations
                     b.Navigation("Vehicles");
                 });
 
+            modelBuilder.Entity("Autopark.API.Entities.Driver", b =>
+                {
+                    b.Navigation("CurrentVehicle");
+                });
+
             modelBuilder.Entity("Autopark.API.Entities.Enterprise", b =>
                 {
                     b.Navigation("Drivers");
 
                     b.Navigation("Vehicles");
-                });
-
-            modelBuilder.Entity("Autopark.API.Entities.Vehicle", b =>
-                {
-                    b.Navigation("CurrentDriver");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,7 +10,7 @@ namespace Autopark.API.Data.EFConfigurations
         {
             builder.HasOne(d => d.CurrentVehicle)
                .WithOne(v => v.CurrentDriver)
-               .HasForeignKey<Vehicle>(v => v.CurrentDriverId);
+               .HasForeignKey<Driver>(d => d.CurrentVehicleId);
 
             builder.HasMany(d => d.Vehicles)
                .WithMany(v => v.Drivers);
