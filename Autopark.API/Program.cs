@@ -11,16 +11,17 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowOrigin",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5237")
+            builder.WithOrigins("http://localhost:5173")
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
 });
 
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddEndpointsApiExplorer(); // don't need this because I use controllers
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
@@ -57,15 +58,18 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.UseStaticFiles();
-app.UseDefaultFiles();
-
-app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGroup("/identity").MapIdentityApi<Manager>(); 
+
+// app.MapPost("/identity/logout", async (SignInManager<Manager> signInManager) => {
+//     await signInManager.SignOutAsync();
+//     return Results.Ok();
+// }).RequireAuthorization();
+// TODO: 404
+// TODO: pingauth
+
 app.MapControllers();
 
 // app.UseHttpsRedirection();
