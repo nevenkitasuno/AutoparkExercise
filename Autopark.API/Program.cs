@@ -13,7 +13,8 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins("http://localhost:5173")
                    .AllowAnyHeader()
-                   .AllowAnyMethod();
+                   .AllowAnyMethod()
+                   .AllowCredentials();
         });
 });
 
@@ -41,6 +42,20 @@ builder.Services.AddIdentityCore<Manager>(options =>
     options.User.RequireUniqueEmail = true;
 }).AddEntityFrameworkStores<AutoparkDbContext>()
     .AddApiEndpoints();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.Cookie.HttpOnly = true;
+    // options.LoginPath = "/identity/login";
+    //using Microsoft.AspNetCore.Authentication.Cookies;
+    // options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+    options.Cookie.Domain = "localhost";
+    // options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.Path = "/";
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 builder.Services.AddDbContext<AutoparkDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(AutoparkDbContext))));
