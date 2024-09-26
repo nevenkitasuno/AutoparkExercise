@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	countOfVehiclesToPost = 10
+	countOfVehiclesToPost = 3000
 	baseURL               = "http://localhost:5237"
-	enterpriseId          = "016790c2-cf54-4fd0-8d7e-2a154912f639"
+	enterpriseId          = "2230f81c-2a6c-487c-a8d7-98bff88044c7"
 	dateOfBirthYearFrom   = 1950
 	dateOfBirthYearTo     = 2005
 	manufactureYearFrom   = 1990
@@ -214,4 +214,5 @@ func main() {
 			}
 		}
 	}
+	fmt.Println("Posted vehicles: ", countOfVehiclesToPost)
 }

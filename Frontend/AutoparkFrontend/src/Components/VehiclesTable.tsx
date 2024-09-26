@@ -13,9 +13,9 @@ import {
   Tr,
   Th,
   Td,
+  Select,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 type Vehicle = {
   id: string;
@@ -25,6 +25,13 @@ type Vehicle = {
   mileage: number;
   brandId: number;
   enterpriseId: string | null;
+};
+
+type PagedResult<T> = {
+  items: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
 };
 
 function VehiclesTable() {
@@ -38,28 +45,28 @@ function VehiclesTable() {
     brandId: 0,
     enterpriseId: null,
   });
-  
+
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    const fetchVehicles = async (): Promise<void> => {
-      const response = await axios.get<Vehicle[]>('http://localhost:5237/api/Vehicle', { withCredentials: true });
-      setVehicles(response.data);
-      // const response = await fetch('http://localhost:5237/api/Vehicle', {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   credentials: 'include',
-      // });
-    };
-
     fetchVehicles();
-  }, []);
+  }, [pageNumber, pageSize]);
+
+  const fetchVehicles = async (): Promise<void> => {
+    const response = await axios.get<PagedResult<Vehicle>>(
+      `http://localhost:5237/api/Vehicle?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      { withCredentials: true }
+    );
+    setVehicles(response.data.items);
+    setTotalCount(response.data.totalCount);
+  };
 
   const addVehicle = async (): Promise<void> => {
     const response = await axios.post('http://localhost:5237/api/Vehicle', newVehicle, { withCredentials: true });
-    setVehicles([...vehicles, response.data]); // Assuming API returns the created vehicle
+    setVehicles([...vehicles, response.data]);
     resetNewVehicle();
   };
 
@@ -87,6 +94,8 @@ function VehiclesTable() {
       enterpriseId: null,
     });
   };
+
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <Container maxW="container.md" p={5}>
@@ -229,6 +238,33 @@ function VehiclesTable() {
             ))}
           </Tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <HStack spacing={4} mt={4}>
+          <Button
+            onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
+            isDisabled={pageNumber === 1}
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={() => setPageNumber(prev => Math.min(prev + 1, totalPages))}
+            isDisabled={pageNumber === totalPages}
+          >
+            Next
+          </Button>
+          <Select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPageNumber(1); // Reset to first page when page size changes
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={30}>30</option>
+          </Select>
+        </HStack>
       </VStack>
     </Container>
   );

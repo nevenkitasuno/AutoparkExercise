@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Autopark.API.Entities.Dtos;
 
 namespace Autopark.API.Controllers
 {
@@ -25,18 +26,30 @@ namespace Autopark.API.Controllers
         public VehicleController(AutoparkDbContext context) { _context = context; }
 
         [HttpGet]
-        public async Task<ActionResult<List<GetVehicleDto>>> GetAllVehiclesAsync()
+        public async Task<ActionResult<PagedResult<GetVehicleDto>>> GetAllVehiclesAsync(int pageNumber = 1, int pageSize = 10)
         {
             var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
 
-            var vehicles = await _context.Vehicles
+            var vehiclesQuery = _context.Vehicles
                 .Where(vehicle => vehicle.EnterpriseId.HasValue && enterpriseIds.Contains(vehicle.EnterpriseId.Value))
-                // .Include("Drivers")
-                .Select(vehicle => vehicle.AsDto()).ToListAsync();
+                .Select(vehicle => vehicle.AsDto());
 
-            return Ok(vehicles);
+            var totalCount = await vehiclesQuery.CountAsync();
+            var vehicles = await vehiclesQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var pagedResult = new PagedResult<GetVehicleDto>
+            {
+                Items = vehicles,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            return Ok(pagedResult);
         }
 
         [HttpGet("{id}")]
