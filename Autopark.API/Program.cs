@@ -1,5 +1,6 @@
 using Autopark.API.Data;
 using Autopark.API.Entities;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews(); // AddControllers - without Anti-Forgery
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // builder.Services.AddEndpointsApiExplorer(); // don't need this because I use controllers
@@ -60,6 +61,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddDbContext<AutoparkDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(AutoparkDbContext))));
 
+builder.Services.AddAntiforgery(options =>
+{
+    // Set Cookie properties using CookieBuilder properties†.
+    options.FormFieldName = "AntiforgeryFieldname";
+    options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
+    options.SuppressXFrameOptionsHeader = false;
+});
+
 var app = builder.Build();
 
 app.UseCors("AllowOrigin");
@@ -76,7 +85,20 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGroup("/identity").MapIdentityApi<Manager>(); 
+var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+
+app.Use((context, next) =>
+{
+    var requestPath = context.Request.Path.Value;
+
+    var tokenSet = antiforgery.GetAndStoreTokens(context);
+    context.Response.Cookies.Append("XSRF-TOKEN", tokenSet.RequestToken!,
+        new CookieOptions { HttpOnly = false });
+
+    return next(context);
+});
+
+app.MapGroup("/identity").MapIdentityApi<Manager>();
 
 // app.MapPost("/identity/logout", async (SignInManager<Manager> signInManager) => {
 //     await signInManager.SignOutAsync();
