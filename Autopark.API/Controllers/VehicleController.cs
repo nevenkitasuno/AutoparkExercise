@@ -67,6 +67,9 @@ namespace Autopark.API.Controllers
         [HttpPost]
         public async Task<ActionResult> AddVehicleAsync(UpsertVehicleDto upsertVehicleDto)
         {
+            bool isAuthorized = await IsAuthorizedUpsertAsync(upsertVehicleDto);
+            if (!isAuthorized) return Unauthorized();
+            
             var vehicle = new Vehicle
             {
                 Id = Guid.NewGuid(),
@@ -87,6 +90,9 @@ namespace Autopark.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVehicleAsync(Guid id, UpsertVehicleDto upsertVehicleDto)
         {
+            bool isAuthorized = await IsAuthorizedUpsertAsync(upsertVehicleDto);
+            if (!isAuthorized) return Unauthorized();
+
             var vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null) return NotFound();
 
@@ -108,6 +114,10 @@ namespace Autopark.API.Controllers
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null) return NotFound();
+
+            var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
+            if (!enterpriseIds.Contains(vehicle.EnterpriseId.Value)) return Unauthorized();
 
             _context.Vehicles.Remove(vehicle);
             await _context.SaveChangesAsync();
@@ -138,6 +148,12 @@ namespace Autopark.API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private async Task<bool> IsAuthorizedUpsertAsync(UpsertVehicleDto upsertVehicleDto) {
+            var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
+            return enterpriseIds.Contains(upsertVehicleDto.EnterpriseId.Value);
         }
     }
 }

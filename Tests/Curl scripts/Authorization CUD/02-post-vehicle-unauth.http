@@ -1,0 +1,13 @@
+curl -X 'POST' \
+  'http://localhost:5237/api/Vehicle/' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -b ".AspNetCore.Identity.Application=CfDJ8OY5n1bCHihOmEbI-Jaa3nIUdc8eN8zgKORF_Oe1Z2g180ip3SvC4qNkMTOL9HQpc7C6GT2peIbey8bskPtqMdYGa42hkiaph4tLNqXr5c6wswNz4hofEnAR-xw4SHj8QH3no2UqPNQrr9F5LbtYg_gvrXYjE0L7_JB05QW9-w5c0H5KWOCGozphDjichUrCHGm_9aLxAfNF7y7lfLQeu5MGVKnuEtw51d1RE4m3ldyiD1XKK8XZUhdOGShKOe1IKFqPuC6_sj1MVTL6XGBL05l7DglLGJyNQr9YrExesijfv5fq4LeM4Y9czhsaRhxVpqLgln-OcyzOWDsFDv2zBtXhpkVW3g5DlPt6IUezrwl4y-pNG0IhaZ_X6OBVB2JnOIzKh5dhU9zw012hFu3OCTk9pU1YoPq3i6AyE88q8LXiuFZClJRrGlD-UqoL-NY8a6lKeEl5envlDxHxZJodX-6bLE4OBX_ajeaXQnfbY4-fhkHIzgI7cAlYWOx3fhNR4NL4MiGfeabJx5qdoSMnVQY48rYOh5yDizBLyY2qiRutFUk1qBNv27fN_8bfkbWcYrlJJBG-G7DLvCC2QWY7d5sbOA4PM-2bUToYHs9tuxp4C_yDOUlRT1_jeQ1EeVf0GWWIO1k5SbPk0w0t5H4joLh4aaMssUnHfPbHItOIVGOMLflnt-qviggPmflWOtLeCUexUMR-Fh7rH9rmFb-uGVYQfa_rULoZWOqAYbnJ64tZRWkv6DWcF0o50ZS071c-lg" \
+  -d '{
+  "licensePlate": "U401AE",
+  "price": 100500,
+  "manufactureYear": 2020,
+  "mileage": 1337,
+  "brandId": 2,
+  "enterpriseId": "61388c27-304e-4c1c-bd2c-7c623bb175ba"
+}'

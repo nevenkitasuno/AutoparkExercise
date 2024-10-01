@@ -56,6 +56,20 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Path = "/";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+    options.Events.OnRedirectToAccessDenied =
+        options.Events.OnRedirectToLogin = c =>
+        {
+            if (c.Request.Path.StartsWithSegments("/api")
+                && c.Response.StatusCode == StatusCodes.Status200OK)
+            {
+                c.Response.Headers.Location = c.RedirectUri;
+                c.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.FromResult<object>(null);
+            }
+            c.Response.Redirect(c.RedirectUri);
+            return Task.FromResult<object>(null);
+        };
 });
 
 builder.Services.AddDbContext<AutoparkDbContext>(options =>
