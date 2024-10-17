@@ -47,7 +47,8 @@ namespace Autopark.API.Controllers
             (
                 enterprise.Id,
                 enterprise.Name,
-                enterprise.City
+                enterprise.City,
+                enterprise.TimeZone
             );
 
             return getEnterpriseDto;
@@ -59,7 +60,8 @@ namespace Autopark.API.Controllers
             var enterprise = new Enterprise
             {
                 Name = upsertEnterpriseDto.Name,
-                City = upsertEnterpriseDto.City
+                City = upsertEnterpriseDto.City,
+                TimeZone = upsertEnterpriseDto.TimeZone
             };
             _context.Enterprises.Add(enterprise);
             await _context.SaveChangesAsync();
@@ -74,6 +76,7 @@ namespace Autopark.API.Controllers
 
             enterprise.Name = upsertEnterpriseDto.Name;
             enterprise.City = upsertEnterpriseDto.City;
+            enterprise.TimeZone = upsertEnterpriseDto.TimeZone;
             await _context.SaveChangesAsync();
 
             return NoContent();

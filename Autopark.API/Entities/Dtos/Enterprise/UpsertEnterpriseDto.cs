@@ -9,6 +9,7 @@ namespace Autopark.API.Entities.Dtos.Enterprise
     public record UpsertEnterpriseDto
     (
         [Required] string City,
-        [Required] string Name
+        [Required] string Name,
+        int TimeZone
     );
 }

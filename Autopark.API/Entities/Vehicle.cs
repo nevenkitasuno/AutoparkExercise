@@ -11,6 +11,7 @@ namespace Autopark.API.Entities
         public Brand? Brand { get; set; }
         public Guid? EnterpriseId { get; set; }
         public Enterprise? Enterprise { get; set; }
+        public DateTime PurchaseDate { get; set; }
 
         // one to one
         public Driver? CurrentDriver { get; set; }

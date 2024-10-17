@@ -25,6 +25,7 @@ type Vehicle = {
   mileage: number;
   brandId: number;
   enterpriseId: string | null;
+  purchaseDate: string; // Adjusted purchase date
 };
 
 type Enterprise = {
@@ -59,6 +60,7 @@ function VehicleManagement() {
     mileage: 0,
     brandId: 0,
     enterpriseId: null,
+    purchaseDate: '', // Add this field
   });
 
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
@@ -104,14 +106,19 @@ function VehicleManagement() {
 
   const updateVehicle = async (id: string): Promise<void> => {
     if (editingVehicle) {
-      await axios.put(`http://localhost:5237/api/Vehicle/${id}`, editingVehicle);
+      // Convert local time to UTC
+      const localDate = new Date(editingVehicle.purchaseDate);
+      const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+      editingVehicle.purchaseDate = utcDate.toISOString(); // Ensure it's in UTC format
+
+      await axios.put(`http://localhost:5237/api/Vehicle/${id}`, editingVehicle, {withCredentials: true});
       setVehicles(vehicles.map(vehicle => (vehicle.id === id ? editingVehicle : vehicle)));
       setEditingVehicle(null);
     }
   };
 
   const deleteVehicle = async (id: string): Promise<void> => {
-    await axios.delete(`http://localhost:5237/api/Vehicle/${id}`);
+    await axios.delete(`http://localhost:5237/api/Vehicle/${id}`, { withCredentials: true });
     setVehicles(vehicles.filter(vehicle => vehicle.id !== id));
   };
 
@@ -124,6 +131,7 @@ function VehicleManagement() {
       mileage: 0,
       brandId: 0,
       enterpriseId: null,
+      purchaseDate: '', // Reset this field
     });
   };
 
@@ -169,6 +177,7 @@ function VehicleManagement() {
                 <Th className="px-6 py-3 text-left">Price</Th>
                 <Th className="px-6 py-3 text-left">Manufacture Year</Th>
                 <Th className="px-6 py-3 text-left">Mileage</Th>
+                <Th className="px-6 py-3 text-left">Purchase Date (Client Timezone)</Th>
                 <Th className="px-6 py-3 text-left">Brand</Th>
                 <Th className="px-6 py-3 text-left">Actions</Th>
               </Tr>
@@ -207,102 +216,146 @@ function VehicleManagement() {
                   />
                 </Td>
                 <Td className="px-6 py-4">
-                  <Select
-                    placeholder="Select Brand"
-                    onChange={(e) => setNewVehicle({ ...newVehicle, brandId: Number(e.target.value) })}
-                  >
-                    {brands.map((brand) => (
-                      <option key={brand.id} value={brand.id}>
-                        {`${brand.manufacturerCompany} ${brand.modelName}`}
-                      </option>
-                    ))}
-                  </Select>
-                </Td>
-                <Td className="px-6 py-4">
                   <Button onClick={addVehicle} colorScheme="blue">Add Vehicle</Button>
                 </Td>
               </Tr>
-              {vehicles.map((vehicle) => (
-                <Tr key={vehicle.id} className="border-b hover:bg-gray-100">
-                  <Td className="px-6 py-4">
-                    {editingVehicle?.id === vehicle.id ? (
-                      <Input
-                        value={editingVehicle.licensePlate || ''}
-                        onChange={(e) => setEditingVehicle({ ...editingVehicle, licensePlate: e.target.value || null })}
-                        placeholder="License Plate"
-                      />
-                    ) : (
-                      vehicle.licensePlate
-                    )}
-                  </Td>
-                  <Td className="px-6 py-4">
-                    {editingVehicle?.id === vehicle.id ? (
-                      <Input
-                        type="number"
-                        value={editingVehicle.price}
-                        onChange={(e) => setEditingVehicle({ ...editingVehicle, price: Number(e.target.value) })}
-                        placeholder="Price"
-                      />
-                    ) : (
-                      vehicle.price
-                    )}
-                  </Td>
-                  <Td className="px-6 py-4">
-                    {editingVehicle?.id === vehicle.id ? (
-                      <Input
-                        type="number"
-                        value={editingVehicle.manufactureYear}
-                        onChange={(e) => setEditingVehicle({ ...editingVehicle, manufactureYear: Number(e.target.value) })}
-                        placeholder="Manufacture Year"
-                      />
-                    ) : (
-                      vehicle.manufactureYear
-                    )}
-                  </Td>
-                  <Td className="px-6 py-4">
-                    {editingVehicle?.id === vehicle.id ? (
-                      <Input
-                        type="number"
-                        value={editingVehicle.mileage}
-                        onChange={(e) => setEditingVehicle({ ...editingVehicle, mileage: Number(e.target.value) })}
-                        placeholder="Mileage"
-                      />
-                    ) : (
-                      vehicle.mileage
-                    )}
-                  </Td>
-                  <Td className="px-6 py-4">
-                    {editingVehicle?.id === vehicle.id ? (
-                      <Select
-                        value={editingVehicle.brandId}
-                        onChange={(e) => setEditingVehicle({ ...editingVehicle, brandId: Number(e.target.value) })}
-                      >
-                        {brands.map((brand) => (
-                          <option key={brand.id} value={brand.id}>
-                            {`${brand.manufacturerCompany} ${brand.modelName}`}
-                          </option>
-                        ))}
-                      </Select>
-                    ) : (
-                      brands.find(brand => brand.id === vehicle.brandId)?.manufacturerCompany + ' ' +
-                      brands.find(brand => brand.id === vehicle.brandId)?.modelName
-                    )}
-                  </Td>
-                  <Td className="px-6 py-4">
-                    <HStack spacing={2}>
+              {vehicles.map((vehicle) => {
+                const purchaseDate = new Date(vehicle.purchaseDate); // Convert to Date object
+                const clientTimezonePurchaseDate = purchaseDate.toLocaleString(); // Display in client's timezone
+
+                return (
+                  <Tr key={vehicle.id} className="border-b hover:bg-gray-100">
+                    <Td className="px-6 py-4">
                       {editingVehicle?.id === vehicle.id ? (
                         <>
-                          <Button onClick={() => updateVehicle(vehicle.id)} colorScheme="green">Save</Button>
-                          <Button onClick={() => setEditingVehicle(null)} colorScheme="red">Cancel</Button>
+                          <Input
+                            type="date"
+                            value={editingVehicle.purchaseDate.split('T')[0]} // Get date part
+                            onChange={(e) => setEditingVehicle({ ...editingVehicle, purchaseDate: new Date(e.target.value).toISOString() })}
+                          />
+                          <Input
+                            type="number"
+                            value={new Date(editingVehicle.purchaseDate).getHours()}
+                            onChange={(e) => {
+                              const hours = Number(e.target.value);
+                              const date = new Date(editingVehicle.purchaseDate);
+                              date.setHours(hours);
+                              setEditingVehicle({ ...editingVehicle, purchaseDate: date.toISOString() });
+                            }}
+                            placeholder="Hours"
+                          />
+                          <Input
+                            type="number"
+                            value={new Date(editingVehicle.purchaseDate).getMinutes()}
+                            onChange={(e) => {
+                              const minutes = Number(e.target.value);
+                              const date = new Date(editingVehicle.purchaseDate);
+                              date.setMinutes(minutes);
+                              setEditingVehicle({ ...editingVehicle, purchaseDate: date.toISOString() });
+                            }}
+                            placeholder="Minutes"
+                          />
                         </>
                       ) : (
-                        <Button onClick={() => setEditingVehicle(vehicle)}>Edit</Button>
+                        clientTimezonePurchaseDate // Display purchase date in client's timezone
                       )}
-                      <Button onClick={() => deleteVehicle(vehicle.id)} colorScheme="red">Delete</Button>
-                    </HStack>
-                  </Td>
-                </Tr>
-              ))}
+                    </Td>
+                    <Td className="px-6 py-4">
+                      {editingVehicle?.id === vehicle.id ? (
+                        <Input
+                          type="number"
+                          value={editingVehicle.price}
+                          onChange={(e) => setEditingVehicle({ ...editingVehicle, price: Number(e.target.value) })}
+                          placeholder="Price"
+                        />
+                      ) : (
+                        vehicle.price
+                      )}
+                    </Td>
+                    <Td className="px-6 py-4">
+                      {editingVehicle?.id === vehicle.id ? (
+                        <Input
+                          type="number"
+                          value={editingVehicle.manufactureYear}
+                          onChange={(e) => setEditingVehicle({ ...editingVehicle, manufactureYear: Number(e.target.value) })}
+                          placeholder="Manufacture Year"
+                        />
+                      ) : (
+                        vehicle.manufactureYear
+                      )}
+                    </Td>
+                    <Td className="px-6 py-4">
+                      {editingVehicle?.id === vehicle.id ? (
+                        <Input
+                          type="number"
+                          value={editingVehicle.mileage}
+                          onChange={(e) => setEditingVehicle({ ...editingVehicle, mileage: Number(e.target.value) })}
+                          placeholder="Mileage"
+                        />
+                      ) : (
+                        vehicle.mileage
+                      )}
+                    </Td>
+                    <Td className="px-6 py-4">
+                      {editingVehicle?.id === vehicle.id ? (
+                        <>
+                          <Input
+                            type="date"
+                            value={editingVehicle.purchaseDate.split('T')[0]} // Get date part
+                            onChange={(e) => setEditingVehicle({ ...editingVehicle, purchaseDate: `${e.target.value}T${editingVehicle.purchaseDate.split('T')[1] || '00:00:00'}` })}
+                          />
+                          <Input
+                            type="number"
+                            min={0}
+                            max={23}
+                            value={editingVehicle.purchaseDate.split('T')[1]?.split(':')[0] || '00'} // Get hour part
+                            onChange={(e) => setEditingVehicle({ ...editingVehicle, purchaseDate: `${editingVehicle.purchaseDate.split('T')[0]}T${e.target.value}:${editingVehicle.purchaseDate.split('T')[1]?.split(':')[1] || '00:00:00'}` })}
+                          />
+                          <Input
+                            type="number"
+                            min={0}
+                            max={59}
+                            value={editingVehicle.purchaseDate.split('T')[1]?.split(':')[1] || '00'} // Get minute part
+                            onChange={(e) => setEditingVehicle({ ...editingVehicle, purchaseDate: `${editingVehicle.purchaseDate.split('T')[0]}T${editingVehicle.purchaseDate.split('T')[1]?.split(':')[0] || '00'}:${e.target.value}` })}
+                          />
+                        </>
+                      ) : (
+                        clientTimezonePurchaseDate
+                      )}
+                    </Td>
+                    <Td className="px-6 py-4">
+                      {editingVehicle?.id === vehicle.id ? (
+                        <Select
+                          value={editingVehicle.brandId}
+                          onChange={(e) => setEditingVehicle({ ...editingVehicle, brandId: Number(e.target.value) })}
+                        >
+                          {brands.map((brand) => (
+                            <option key={brand.id} value={brand.id}>
+                              {`${brand.manufacturerCompany} ${brand.modelName}`}
+                            </option>
+                          ))}
+                        </Select>
+                      ) : (
+                        brands.find(brand => brand.id === vehicle.brandId)?.manufacturerCompany + ' ' +
+                        brands.find(brand => brand.id === vehicle.brandId)?.modelName
+                      )}
+                    </Td>
+                    <Td className="px-6 py-4">
+                      <HStack spacing={2}>
+                        {editingVehicle?.id === vehicle.id ? (
+                          <>
+                            <Button onClick={() => updateVehicle(vehicle.id)} colorScheme="green">Save</Button>
+                            <Button onClick={() => setEditingVehicle(null)} colorScheme="red">Cancel</Button>
+                          </>
+                        ) : (
+                          <Button onClick={() => setEditingVehicle(vehicle)}>Edit</Button>
+                        )}
+                        <Button onClick={() => deleteVehicle(vehicle.id)} colorScheme="red">Delete</Button>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                );
+              })}
             </Tbody>
           </Table>
 

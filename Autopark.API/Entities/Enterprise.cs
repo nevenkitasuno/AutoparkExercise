@@ -13,5 +13,6 @@ namespace Autopark.API.Entities
         public List<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         public List<Driver> Drivers { get; set; } = new List<Driver>();
         public List<Manager> Managers { get; set; } = new List<Manager>();
+        public int TimeZone { get; set; } = 0;
     }
 }

@@ -10,6 +10,7 @@ namespace Autopark.API.Entities.Dtos.Enterprise
     (
         [Required] Guid Id,
         [Required] string Name,
-        [Required] string City
+        [Required] string City,
+        int TimeZone
     );
 }

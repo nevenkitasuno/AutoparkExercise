@@ -32,8 +32,7 @@ namespace Autopark.API.Controllers
             var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
 
             var vehiclesQuery = _context.Vehicles
-                .Where(vehicle => vehicle.EnterpriseId.HasValue && enterpriseIds.Contains(vehicle.EnterpriseId.Value))
-                .Select(vehicle => vehicle.AsDto());
+                .Where(vehicle => vehicle.EnterpriseId.HasValue && enterpriseIds.Contains(vehicle.EnterpriseId.Value));
 
             var totalCount = await vehiclesQuery.CountAsync();
             var vehicles = await vehiclesQuery
@@ -41,9 +40,15 @@ namespace Autopark.API.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
+            // Fetch the timezone for the first vehicle's enterprise if they are all from the same enterprise
+            var enterpriseTimeZone = await _context.Enterprises
+                .Where(e => e.Id == vehicles.First().EnterpriseId)
+                .Select(e => e.TimeZone)
+                .FirstOrDefaultAsync();
+
             var pagedResult = new PagedResult<GetVehicleDto>
             {
-                Items = vehicles,
+                Items = vehicles.Select(vehicle => vehicle.AsDto(enterpriseTimeZone)).ToList(),
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -53,13 +58,17 @@ namespace Autopark.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ActionName(nameof(GetVehicleAsync))] // TODO How to get rid of it? In FreeCodeCamp course works without it
         public async Task<ActionResult<GetVehicleDto>> GetVehicleAsync(Guid id)
         {
             var vehicle = await _context.Vehicles.Include(v => v.Drivers).FirstOrDefaultAsync(v => v.Id == id);
             if (vehicle == null) return NotFound();
 
-            var getVehicleDto = vehicle.AsDto();
+            var enterpriseTimeZone = await _context.Enterprises
+                .Where(e => e.Id == vehicle.EnterpriseId)
+                .Select(e => e.TimeZone)
+                .FirstOrDefaultAsync();
+
+            var getVehicleDto = vehicle.AsDto(enterpriseTimeZone); // Use the updated AsDto method
 
             return getVehicleDto;
         }
@@ -69,7 +78,7 @@ namespace Autopark.API.Controllers
         {
             bool isAuthorized = await IsAuthorizedUpsertAsync(upsertVehicleDto);
             if (!isAuthorized) return Unauthorized();
-            
+
             var vehicle = new Vehicle
             {
                 Id = Guid.NewGuid(),
@@ -79,12 +88,13 @@ namespace Autopark.API.Controllers
                 LicensePlate = upsertVehicleDto.LicensePlate,
                 BrandId = upsertVehicleDto.BrandId,
                 EnterpriseId = upsertVehicleDto.EnterpriseId,
+                PurchaseDate = upsertVehicleDto.PurchaseDate
             };
 
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetVehicleAsync), new { id = vehicle.Id }, vehicle.AsDto());
+            return CreatedAtAction(nameof(GetVehicleAsync), new { id = vehicle.Id });
         }
 
         [HttpPut("{id}")]
@@ -102,6 +112,7 @@ namespace Autopark.API.Controllers
             vehicle.LicensePlate = upsertVehicleDto.LicensePlate;
             vehicle.BrandId = upsertVehicleDto.BrandId;
             vehicle.EnterpriseId = upsertVehicleDto.EnterpriseId;
+            vehicle.PurchaseDate = upsertVehicleDto.PurchaseDate;
 
             // _context.Entry(vehicle).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -150,7 +161,8 @@ namespace Autopark.API.Controllers
             return NoContent();
         }
 
-        private async Task<bool> IsAuthorizedUpsertAsync(UpsertVehicleDto upsertVehicleDto) {
+        private async Task<bool> IsAuthorizedUpsertAsync(UpsertVehicleDto upsertVehicleDto)
+        {
             var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
             return enterpriseIds.Contains(upsertVehicleDto.EnterpriseId.Value);

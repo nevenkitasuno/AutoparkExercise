@@ -109,7 +109,7 @@ namespace Autopark.API.Controllers
         {
             var vehicles = await _context.Vehicles
                 .Where(vehicles => vehicles.Drivers.Select(driver => driver.Id).Contains(id))
-                .Select(vehicle => vehicle.AsDto()).ToListAsync();
+                .Select(vehicle => vehicle.AsDto(0)).ToListAsync();
             return Ok(vehicles);
         }
     }

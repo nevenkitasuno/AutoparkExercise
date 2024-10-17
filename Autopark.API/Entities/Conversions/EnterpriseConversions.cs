@@ -13,7 +13,8 @@ namespace Autopark.API.Entities.Conversions
             (
                 enterprise.Id,
                 enterprise.Name,
-                enterprise.City
+                enterprise.City,
+                enterprise.TimeZone
             );
         }
     }

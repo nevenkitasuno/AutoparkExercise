@@ -73,7 +73,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddDbContext<AutoparkDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(AutoparkDbContext))));
+    options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(AutoparkDbContext)),
+    o => o.UseNetTopologySuite()));
 
 builder.Services.AddAntiforgery(options =>
 {
