@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -71,11 +71,11 @@ func getRoute(start, end [2]float64) ([][]float64, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return nil, fmt.Errorf("getRoute: error fetching route: %s, response: %s", resp.Status, string(body))
 	}
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, _ = io.ReadAll(resp.Body)
 	var routeResponse RouteResponse
 	if err := json.Unmarshal(body, &routeResponse); err != nil {
 		return nil, fmt.Errorf("getRoute: error unmarshaling response: %w", err)
@@ -148,7 +148,7 @@ func postGpsPoint(points []UpsertGpsPointDto) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		bodyResp, _ := ioutil.ReadAll(resp.Body)
+		bodyResp, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("postGpsPoint: error posting GPS point: %s, response: %s", resp.Status, string(bodyResp))
 	}
 
