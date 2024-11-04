@@ -17,6 +17,7 @@ namespace Autopark.API.Data
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<Enterprise> Enterprises { get; set; }
         public DbSet<GpsPoint> GpsPoints { get; set; }
+        public DbSet<Trip> Trips { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,10 @@
+curl -X 'POST' \
+  'http://localhost:5237/api/Trips/gps-points' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "vehicleId": "36ceafb2-0ac5-42b1-81fb-18681b0db151",
+  "from": "2023-11-02T09:32:22.258Z",
+  "to": "2024-10-28T09:47:27.543Z",
+  "returnGeoJson": true
+}'
