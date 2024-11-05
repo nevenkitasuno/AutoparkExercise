@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Autopark.API.Data;
 using Autopark.API.Entities;
 using Autopark.API.Entities.Dtos;
-using Autopark.API.Entities.Dtos.GpsPoint;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetTopologySuite.Geometries;
@@ -79,10 +78,10 @@ namespace Autopark.API.Controllers
                 return Ok(geoJsonResult);
             }
 
-            var result = query.Select(p => new
+            var result = query.Select(p => new GetGpsPointWithoutVehicleIdDto
             {
-                p.Id,
-                p.Timestamp,
+                Id = p.Id,
+                Timestamp = p.Timestamp,
                 Latitude = p.point.Y,
                 Longitude = p.point.X
             }).ToList();

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Autopark.API.Entities.Dtos.GpsPoint;
+using Autopark.API.Entities.Dtos;
 using NetTopologySuite.Geometries;
 
 namespace Autopark.API.Entities
@@ -21,6 +21,17 @@ namespace Autopark.API.Entities
             {
                 Id = Id,
                 VehicleId = VehicleId,
+                Timestamp = Timestamp,
+                Latitude = point.Y,
+                Longitude = point.X
+            };
+        }
+
+        public GetGpsPointWithoutVehicleIdDto AsDtoWithoutVehicleId()
+        {
+            return new GetGpsPointWithoutVehicleIdDto
+            {
+                Id = Id,
                 Timestamp = Timestamp,
                 Latitude = point.Y,
                 Longitude = point.X

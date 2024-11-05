@@ -1,4 +1,4 @@
-namespace Autopark.API.Entities.Dtos.GpsPoint
+namespace Autopark.API.Entities.Dtos
 {
     public record UpsertTripDto
     {
@@ -9,5 +9,13 @@ namespace Autopark.API.Entities.Dtos.GpsPoint
     public record GetTripDto : UpsertTripDto
     {
         public long Id { get; set; }
+    }
+    public record TripInfoDto
+    {
+        public GetTripDto Trip { get; set; }
+        public GetGpsPointWithoutVehicleIdDto StartPoint { get; set; }
+        public string StartPointAddress { get; set; }
+        public GetGpsPointWithoutVehicleIdDto EndPoint { get; set; }
+        public string EndPointAddress { get; set; }
     }
 }

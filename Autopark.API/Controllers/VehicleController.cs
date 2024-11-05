@@ -167,5 +167,47 @@ namespace Autopark.API.Controllers
             var enterpriseIds = await Manager.GetEnterpriseIdsAsync(_context, loggedUserId);
             return enterpriseIds.Contains(upsertVehicleDto.EnterpriseId.Value);
         }
+
+        [AllowAnonymous]
+        [HttpGet("{id}/trips")]
+        public async Task<IActionResult> GetTripsByVehicleId(Guid id)
+        {
+            var trips = await _context.Trips
+                .Where(t => t.VehicleId == id)
+                .ToListAsync();
+
+            if (!trips.Any())
+            {
+                return Ok(new List<Trip>());
+            }
+
+            var res = new List<TripInfoDto>();
+
+            var token = "API_KEY";
+            var api = new Dadata.SuggestClientAsync(token);
+
+            foreach (Trip trip in trips)
+            {
+                var tripInfoDto = new TripInfoDto();
+
+                var gpsPoints = await _context.GpsPoints
+                .Where(g => g.VehicleId == id && g.Timestamp >= trip.Start && g.Timestamp <= trip.End)
+                .OrderBy(p => p.Timestamp)
+                .ToListAsync();
+
+                if (gpsPoints.Any())
+                {
+                    tripInfoDto.StartPoint = gpsPoints.FirstOrDefault().AsDtoWithoutVehicleId();
+                    var response = await api.Geolocate(lat: tripInfoDto.StartPoint.Latitude, lon: tripInfoDto.StartPoint.Longitude, radius_meters: 50);
+                    tripInfoDto.StartPointAddress = response.suggestions[0].value;
+
+                    tripInfoDto.EndPoint = gpsPoints.LastOrDefault().AsDtoWithoutVehicleId();
+                    response = await api.Geolocate(lat: tripInfoDto.EndPoint.Latitude, lon: tripInfoDto.EndPoint.Longitude, radius_meters: 50);
+                    tripInfoDto.EndPointAddress = response.suggestions[0].value;
+                }
+            }
+
+            return Ok(res);
+        }
     }
 }

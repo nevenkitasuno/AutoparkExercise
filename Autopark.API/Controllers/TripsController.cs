@@ -1,7 +1,6 @@
 using Autopark.API.Data;
 using Autopark.API.Entities;
 using Autopark.API.Entities.Dtos;
-using Autopark.API.Entities.Dtos.GpsPoint;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,10 +61,10 @@ namespace Autopark.API.Controllers
             // Filter GPS points based on the trip time ranges in memory
             var filteredGpsPoints = gpsPoints
                 .Where(g => trips.Any(t => g.Timestamp >= t.Start && g.Timestamp <= t.End))
-                .Select(p => new
+                .Select(p => new GetGpsPointWithoutVehicleIdDto
                 {
-                    p.Id,
-                    p.Timestamp,
+                    Id = p.Id,
+                    Timestamp = p.Timestamp,
                     Latitude = p.point.Y,
                     Longitude = p.point.X
                 })
