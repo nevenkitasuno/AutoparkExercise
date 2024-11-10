@@ -181,9 +181,9 @@ func generateTrack(vehicleId Guid, routeCoords [][]float64, interval time.Durati
 }
 
 func main() {
-	vehicleId := Guid("36ceafb2-0ac5-42b1-81fb-18681b0db151")
-	start := [2]float64{8.681495, 49.41461} // Example: starting coordinates
-	end := [2]float64{8.686507, 49.41943}   // Example: ending coordinates
+	vehicleId := Guid("c4bf43ee-4b5f-4ccb-b788-853656d42859")
+	start := [2]float64{49.6184, 54.2139} // Example: starting coordinates
+	end := [2]float64{49.7740, 54.1405}   // Example: ending coordinates
 
 	routeCoords, err := getRoute(start, end)
 	if err != nil {

@@ -168,43 +168,73 @@ namespace Autopark.API.Controllers
             return enterpriseIds.Contains(upsertVehicleDto.EnterpriseId.Value);
         }
 
+        // GET /api/vehicles/{id}/trips?startDate=2024-01-01T00:00:00Z&endDate=2024-01-31T23:59:59Z
         [AllowAnonymous]
         [HttpGet("{id}/trips")]
-        public async Task<IActionResult> GetTripsByVehicleId(Guid id)
+        public async Task<IActionResult> GetTripsByVehicleId(Guid id, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
-            var trips = await _context.Trips
-                .Where(t => t.VehicleId == id)
-                .ToListAsync();
+            // If startDate or endDate are provided, ensure they're in UTC
+            if (startDate.HasValue && startDate.Value.Kind != DateTimeKind.Utc)
+            {
+                startDate = DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc);
+            }
+
+            if (endDate.HasValue && endDate.Value.Kind != DateTimeKind.Utc)
+            {
+                endDate = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
+            }
+
+            // Build the initial query to get trips by vehicle ID
+            var query = _context.Trips.AsQueryable();
+
+            // Apply start date filter if provided
+            if (startDate.HasValue)
+            {
+                query = query.Where(t => t.Start >= startDate.Value);
+            }
+
+            // Apply end date filter if provided
+            if (endDate.HasValue)
+            {
+                query = query.Where(t => t.End <= endDate.Value);
+            }
+
+            // Fetch trips from the database
+            var trips = await query.Where(t => t.VehicleId == id).ToListAsync();
 
             if (!trips.Any())
             {
-                return Ok(new List<Trip>());
+                return Ok(new List<TripInfoDto>());
             }
 
             var res = new List<TripInfoDto>();
 
-            var token = "API_KEY";
+            var token = "YOUR_API_KEY";
             var api = new Dadata.SuggestClientAsync(token);
 
             foreach (Trip trip in trips)
             {
                 var tripInfoDto = new TripInfoDto();
 
+                tripInfoDto.TripId = trip.Id;
+
                 var gpsPoints = await _context.GpsPoints
-                .Where(g => g.VehicleId == id && g.Timestamp >= trip.Start && g.Timestamp <= trip.End)
-                .OrderBy(p => p.Timestamp)
-                .ToListAsync();
+                    .Where(g => g.VehicleId == id && g.Timestamp >= trip.Start && g.Timestamp <= trip.End)
+                    .OrderBy(p => p.Timestamp)
+                    .ToListAsync();
 
                 if (gpsPoints.Any())
                 {
                     tripInfoDto.StartPoint = gpsPoints.FirstOrDefault().AsDtoWithoutVehicleId();
                     var response = await api.Geolocate(lat: tripInfoDto.StartPoint.Latitude, lon: tripInfoDto.StartPoint.Longitude, radius_meters: 50);
-                    tripInfoDto.StartPointAddress = response.suggestions[0].value;
+                    if (response.suggestions.Any()) tripInfoDto.StartPointAddress = response.suggestions[0].value;
 
                     tripInfoDto.EndPoint = gpsPoints.LastOrDefault().AsDtoWithoutVehicleId();
                     response = await api.Geolocate(lat: tripInfoDto.EndPoint.Latitude, lon: tripInfoDto.EndPoint.Longitude, radius_meters: 50);
-                    tripInfoDto.EndPointAddress = response.suggestions[0].value;
+                    if (response.suggestions.Any()) tripInfoDto.EndPointAddress = response.suggestions[0].value;
                 }
+
+                res.Add(tripInfoDto);
             }
 
             return Ok(res);

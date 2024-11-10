@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autopark.API.Entities.Dtos;
 
 namespace Autopark.API.Entities
 {
@@ -12,5 +13,15 @@ namespace Autopark.API.Entities
         public Vehicle Vehicle { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+
+        public GetTripDto AsDto() {
+            return new GetTripDto
+            {
+                Id = Id,
+                VehicleId = VehicleId,
+                StartTimestamp = Start,
+                EndTimestamp = End
+            };
+        }
     }
 }

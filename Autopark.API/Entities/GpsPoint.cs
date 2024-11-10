@@ -22,8 +22,8 @@ namespace Autopark.API.Entities
                 Id = Id,
                 VehicleId = VehicleId,
                 Timestamp = Timestamp,
-                Latitude = point.Y,
-                Longitude = point.X
+                Latitude = point.X,
+                Longitude = point.Y
             };
         }
 
@@ -33,8 +33,8 @@ namespace Autopark.API.Entities
             {
                 Id = Id,
                 Timestamp = Timestamp,
-                Latitude = point.Y,
-                Longitude = point.X
+                Latitude = point.X,
+                Longitude = point.Y
             };
         }
     }   

@@ -12,7 +12,7 @@ namespace Autopark.API.Entities.Dtos
     }
     public record TripInfoDto
     {
-        public GetTripDto Trip { get; set; }
+        public long TripId { get; set; }
         public GetGpsPointWithoutVehicleIdDto StartPoint { get; set; }
         public string StartPointAddress { get; set; }
         public GetGpsPointWithoutVehicleIdDto EndPoint { get; set; }
