@@ -64,21 +64,21 @@ const MapWithTrack: React.FC<TrackProps> = ({ vehicleId, from, to, trips }) => {
           setMapBounds(null);
           return;
         }
-  
+
         // Initialize an empty GeoJSON feature collection with proper type
         let combinedGeoJson: GeoJSONFeatureCollection = {
           type: "FeatureCollection",
           features: [],
         };
-  
+
         // Loop through each trip and append its GeoJSON data
         for (const trip of trips) {
           console.log(`Fetching GeoJSON for trip: ${trip.tripId}`);
-  
+
           // Extract the 'from' and 'to' timestamps from the trip data
           const tripFrom = trip.startPoint?.timestamp;
           const tripTo = trip.endPoint?.timestamp;
-  
+
           if (tripFrom && tripTo) {
             // Make the API request for the current trip using its own 'from' and 'to' values
             const response = await axios.post('http://localhost:5237/api/GpsPoint/GetTrack', {
@@ -87,19 +87,28 @@ const MapWithTrack: React.FC<TrackProps> = ({ vehicleId, from, to, trips }) => {
               to: tripTo,      // End timestamp for the trip
               returnGeoJson: true,  // Request GeoJSON data
             });
-  
+
             // Append the fetched GeoJSON features to the combined collection
             if (response.data && response.data.features) {
-              combinedGeoJson.features.push(...response.data.features);
+              // Convert points to LineString if needed
+              const lineStringFeature: GeoJSONFeature = {
+                type: "Feature",
+                geometry: {
+                  type: "LineString",
+                  coordinates: response.data.features.map((feature: GeoJSONFeature) => feature.geometry.coordinates),
+                },
+                properties: {}, // Add any relevant properties here
+              };
+              combinedGeoJson.features.push(lineStringFeature);
             }
           }
         }
-  
+
         console.log('Combined GeoJSON:', combinedGeoJson);
-  
+
         // Set the combined GeoJSON data
         setGeoJsonData(combinedGeoJson);
-  
+
         // Calculate map bounds based on the trips
         const bounds = calculateMapBounds(trips);
         console.log('Map bounds:', bounds);
@@ -108,15 +117,14 @@ const MapWithTrack: React.FC<TrackProps> = ({ vehicleId, from, to, trips }) => {
         console.error('Error fetching GPS track:', error);
       }
     };
-  
+
     fetchGpsTrack();
-  }, [vehicleId, trips]); // Dependencies (vehicleId and trips)  
+  }, [vehicleId, trips]); // Dependencies (vehicleId and trips)
 
   if (!geoJsonData) return <div>Loading map...</div>;
 
   // Use mapBounds if available, otherwise default to center
   const bounds: LatLngBoundsExpression | undefined = mapBounds ? mapBounds : undefined;
-  
 
   return (
     <MapContainer

@@ -209,7 +209,7 @@ namespace Autopark.API.Controllers
 
             var res = new List<TripInfoDto>();
 
-            var token = "YOUR_API_KEY";
+            var token = "API_KEY";
             var api = new Dadata.SuggestClientAsync(token);
 
             foreach (Trip trip in trips)
