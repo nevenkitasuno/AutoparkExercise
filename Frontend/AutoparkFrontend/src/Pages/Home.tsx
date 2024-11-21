@@ -1,4 +1,5 @@
 import BrandsTable from "../Components/BrandsTable";
+import Reports from "../Components/Reports";
 import VehicleManagement from "../Components/VehiclesManagement";
 
 function Home() {
@@ -6,6 +7,7 @@ function Home() {
         <div>
             <BrandsTable />
             <VehicleManagement />
+            <Reports />
         </div>
     );
 }

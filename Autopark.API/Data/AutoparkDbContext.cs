@@ -6,6 +6,7 @@ using Autopark.API.Data.EFConfigurations;
 using Autopark.API.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Autopark.API.Data
 {
@@ -18,6 +19,7 @@ namespace Autopark.API.Data
         public DbSet<Enterprise> Enterprises { get; set; }
         public DbSet<GpsPoint> GpsPoints { get; set; }
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<VehicleMileageReport> VehicleMileageReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +31,12 @@ namespace Autopark.API.Data
             modelBuilder.HasDefaultSchema("identity");
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<VehicleMileageReport>()
+                .Property(b => b.Result)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<Dictionary<DateTime, int>>(v));
         }
     }
 }
